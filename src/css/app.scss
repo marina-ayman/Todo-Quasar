@@ -1,1 +1,137 @@
-// app global css in SCSS form
+.light-mode {
+  background-color: var(--background-light);
+  color: var(--text-light-black);
+}
+
+.dark-mode {
+  background-color: var(--background-dark);
+  color: var(--text-dark-black);
+}
+
+.q-header {
+  background-color: var(--card-body-light);
+  border-radius: 0px 0px 15px 15px;
+}
+
+.dark-mode .q-header {
+  background-color: var(--card-body-dark);
+}
+
+.user-card {
+  background-color: var(--card-body-light);
+  border-radius: 15px 15px 15px 15px;
+}
+
+.dark-mode .user-card {
+  background-color: var(--card-body-dark);
+}
+
+.q-header2 {
+  background-color: var(--card-header-light);
+  border-radius: 0px 0px 15px 15px;
+  color: var(--primary);
+}
+
+.dark-mode .q-header2 {
+  background-color: var(--card-header-dark);
+}
+.grey {
+  color: var(--grey2);
+}
+.dark-mode .grey {
+  color: var(--grey3);
+}
+
+.title {
+  color: var(--text-dark-light);
+  font-size: 30px;
+}
+.dark-mode .title {
+  color: var(--text-dark-black);
+}
+
+.title:hover {
+  color: var(--primary);
+}
+
+.quick-task {
+  color: var(--primary);
+  transition: 0.3s ease-in-out;
+  border-radius: 8px;
+  padding: 5px;
+  text-decoration: none;
+}
+
+.quick-task:hover {
+  background-color: var(--textbg-light-hover);
+}
+
+.dark-mode .quick-task:hover {
+  background-color: var(--textbg-dark-hover);
+}
+
+.custom-drawer {
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: var(--background-light);
+}
+
+.dark-mode .custom-drawer {
+  background-color: var(--background-dark);
+}
+
+.customText {
+  color: var(--grey2);
+  transition: 0.3s ease-in-out;
+  border-radius: 8px;
+  padding: 5px;
+  text-decoration: none;
+}
+
+.dark-mode .customText {
+  color: var(--grey3);
+}
+
+.customText:hover {
+  color: var(--primary);
+  background-color: var(--textbg-light-hover);
+}
+
+.dark-mode .customText:hover {
+  background-color: var(--textbg-dark-hover);
+}
+
+.text2 {
+  color: var(--primary);
+}
+
+.text2:hover {
+  color: var(--secondary);
+}
+
+.custom-btn {
+  color: var(--secondary);
+  background-color: var(--textbg-light);
+  transition: 0.3s ease-in-out;
+  border-radius: 8px;
+}
+
+.dark-mode .custom-btn {
+  background-color: var(--textbg-dark);
+}
+
+.custom-btn-mode {
+  color: var(--secondary);
+}
+
+.dark-mode .custom-btn-mode {
+  color: var(--textbg-dark);
+}
+
+.custom-btn:hover {
+  background-color: var(--textbg-light-hover);
+}
+
+.dark-mode .custom-btn:hover {
+  background-color: var(--textbg-dark-hover);
+}

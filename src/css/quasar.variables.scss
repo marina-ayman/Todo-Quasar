@@ -1,25 +1,25 @@
-// Quasar SCSS (& Sass) Variables
-// --------------------------------------------------
-// To customize the look and feel of this app, you can override
-// the Sass/SCSS variables found in Quasar's source Sass/SCSS files.
+:root {
+  --primary: #63b3ff;
+  --secondary: #0573db;
+  --grey1: #00000080;
+  --grey2: #0000006f;
+  --grey3: #ffffffbf;
 
-// Check documentation for full list of Quasar variables
+  // Light Mode
+  --background-light: #eaeff5;
+  --text-light-black: #11171d;
+  --card-header-light: #e6efff;
+  --card-body-light: #ffffff;
+  --border-light: #ddd;
+  --textbg-light: #e2f0ff;
+  --textbg-light-hover: #c6e1ff;
 
-// Your own variables (that are declared here) and Quasar's own
-// ones will be available out of the box in your .vue/.scss/.sass files
-
-// It's highly recommended to change the default colors
-// to match your app's branding.
-// Tip: Use the "Theme Builder" on Quasar's documentation website.
-
-$primary   : #1976D2;
-$secondary : #26A69A;
-$accent    : #9C27B0;
-
-$dark      : #1D1D1D;
-$dark-page : #121212;
-
-$positive  : #21BA45;
-$negative  : #C10015;
-$info      : #31CCEC;
-$warning   : #F2C037;
+  // Dark Mode
+  --background-dark: #090e13;
+  --text-dark-black: #ffffffe6;
+  --card-header-dark: #25303a;
+  --card-body-dark: #181e24;
+  --border-dark: #1c1c1c77;
+  --textbg-dark: #182839;
+  --textbg-dark-hover: #324457;
+}

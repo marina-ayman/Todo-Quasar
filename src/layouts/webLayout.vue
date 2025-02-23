@@ -1,23 +1,20 @@
 <template :class="themeClass">
   <q-layout view="hHh lpR fFf">
-    <q-header class="q-header">
+    <q-header class="q-mx-xl q-pa-sm q-header" style="border-radius: 0px 0px 15px 15px">
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-          class="custom-btn"
-        />
-
         <q-toolbar-title>
-          <router-link to="/dashboard" class="q-mr-xl quick-task"> QuickTask </router-link>
+          <router-link to="/profile" class="q-mr-xl quick-task"> QuickTask </router-link>
+
+          <router-link to="/todos" active-class="text-primary" class="customText text-h6 q-mx-md">
+            Todos
+          </router-link>
+          <router-link to="/profile" active-class="text-primary" class="customText text-h6 q-mx-md">
+            Profile
+          </router-link>
         </q-toolbar-title>
 
         <div>
-          <q-btn class="custom-btn" glossy @click="logOut()"> LOG OUT </q-btn>
+          <q-btn class="custom-btn" @click="logOut()"> LOG OUT </q-btn>
           <q-toggle v-model="$q.dark.isActive" class="q-mb-md text-blue-6 q-pt-md" />
           <q-btn
             flat
@@ -31,14 +28,6 @@
         </div>
       </q-toolbar>
     </q-header>
-
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered class="q-header">
-      <q-list class="q-header">
-        <q-item-label header class="text2"> QuickTask Links </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
-    </q-drawer>
 
     <q-drawer
       show-if-above
@@ -117,12 +106,9 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
-
 export default {
   data() {
     return {
-      leftDrawerOpen: false,
       rightDrawerOpen: false,
       user: {
         firstName: '',
@@ -130,48 +116,34 @@ export default {
         email: '',
         age: 0,
       },
-      linksList: [
-        {
-          title: 'All Todos',
-          icon: 'school',
-          link: '/dashboard/all_todos/',
-        },
-        {
-          title: 'All Users',
-          icon: 'code',
-          link: '/dashboard',
-        },
-      ],
     }
   },
   watch: {
-    bodyClass(newClass) {
+    themeClass(newClass) {
       document.body.className = newClass
     },
   },
 
   methods: {
-    toggleLeftDrawer() {
-      this.leftDrawerOpen = !this.leftDrawerOpen
-    },
     toggleRightDrawer() {
       this.rightDrawerOpen = !this.rightDrawerOpen
     },
     async getProfile() {
       try {
-        const response = await this.$adminApi.get('/web/profile')
+        const response = await this.$api.get('/web/profile')
+        console.log('Donmmm', response)
         this.user = response.data.profile
       } catch (error) {
         console.error('error', error.response ? error.response.data : error.message)
       }
     },
     logOut() {
-      localStorage.removeItem('adminToken')
-      this.$router.push('/dashboard/auth/login')
+      localStorage.removeItem('token')
+      this.$router.push('/auth/login')
     },
   },
   async mounted() {
-    document.body.className = this.bodyClass
+    document.body.className = this.themeClass
     this.rightDrawerOpen = false
     await this.getProfile()
     this.$q.dark.set(true)
@@ -180,12 +152,6 @@ export default {
     themeClass() {
       return this.$q.dark.isActive ? 'dark-mode' : 'light-mode'
     },
-    bodyClass() {
-      return this.$q.dark.isActive ? 'dark-mode' : 'light-mode'
-    },
-  },
-  components: {
-    EssentialLink,
   },
 }
 </script>
