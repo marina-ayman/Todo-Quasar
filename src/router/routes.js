@@ -36,7 +36,7 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/dashboard/UsersPage.vue') },
       { path: 'all_todos', component: () => import('pages/dashboard/TodosPage.vue') },
-      { path: 'user_todos/:id', component: () => import('pages/dashboard/UserTodos.vue') },
+      { path: 'user_todos/:id/:name', component: () => import('pages/dashboard/UserTodos.vue') },
     ],
   },
 

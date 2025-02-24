@@ -1,10 +1,15 @@
 <template>
   <div class="q-ma-xl">
     <h2>All Users</h2>
-    <div class="q-py-md q-my-md user-card" v-for="(user, index) in users" :key="index">
+    <q-input v-model="search" label="Search..." dense outlined class="q-mb-sm ">
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+    </q-input>
+    <div class="q-py-md q-my-md user-card" v-for="(user, index) in filterRows" :key="index">
       <div class="row">
         <div class="col-9 q-px-xl">
-          <h4 class="cursor-pointer q-ma-sm q-px-md title text-weight-bolder" style="border-left: 5px solid blue" @click="getTasksUser(user.id)">
+          <h4 class="cursor-pointer q-ma-sm q-px-md title text-weight-bolder" style="border-left: 5px solid blue" @click="getTasksUser(user.id, user.firstName)">
             {{ user.firstName }} {{ user.lastName }}
           </h4>
           <div class="text-weight-bold q-px-md q-mx-md text2">{{ user.email }}</div>
@@ -21,7 +26,7 @@
             icon="arrow_forward_ios"
             class="custom-btn q-px-md q-mx-sm"
             style="min-height: 190px"
-            @click="getTasksUser(user.id)"
+            @click="getTasksUser(user.id,user.firstName)"
           ></q-btn>
         </div>
       </div>
@@ -33,6 +38,7 @@ export default {
   data() {
     return {
       users: {},
+      search:'',
     }
   },
 
@@ -49,9 +55,21 @@ export default {
         console.log(err)
       }
     },
-    getTasksUser(id) {
-      this.$router.push(`/dashboard/user_todos/${id}`)
+    getTasksUser(id, name) {
+      this.$router.push(`/dashboard/user_todos/${id}/${name}`)
     },
+  },
+  computed: {
+    filterRows() {
+      if (!this.search) return this.users; 
+
+      const searchLower = this.search.toLowerCase();
+      return this.users.filter(user =>
+        Object.values(user).some(value =>
+          value && String(value).toLowerCase().includes(searchLower)
+        )
+      );
+    }
   },
 }
 </script>

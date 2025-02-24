@@ -52,9 +52,9 @@ const refreshToken = async () => {
       console.log("Unexpected error while refreshing token.");
     }
 
-    // localStorage.removeItem("token");
-    // localStorage.removeItem("refreshToken");
-    // window.location.href = '/auth/login';
+    localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    window.location.href = '/auth/login';
     return null;
   }
 };
@@ -69,9 +69,9 @@ const refreshAdminToken = async () => {
     return data.accessToken;
   } catch (error) {
     console.error("Failed to refresh admin token", error);
-    // localStorage.removeItem("adminToken");
-    // localStorage.removeItem("adminRefreshToken");
-    //  window.location.href ='/dashboard/auth/login'
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminRefreshToken");
+     window.location.href ='/dashboard/auth/login'
     return null;
   }
 };

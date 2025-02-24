@@ -1,9 +1,16 @@
 <template>
-  <div class="q-pa-md">
+
+  <div class="q-pa-md q-ma-xl">
+    
+    <q-input v-model="search" label="Search..." dense outlined class="q-mx-xl">
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+    </q-input>
     <q-table
       flat
-      title="Your ToDo"
-      :rows="rowsData"
+      :title="title"
+      :rows="filterRows"
       :columns="columns"
       color="primary"
       row-key="name"
@@ -20,13 +27,7 @@
           label="export"
           @click="exportTable"
         />
-        <q-btn
-          class="q-mx-sm custom-btn"
-          glossy
-          icon="library_add"
-          label="add"
-          @click="showDialog = true"
-        />
+        
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
@@ -52,6 +53,8 @@
         </q-td>
       </template>
     </q-table>
+    <q-btn icon="arrow_back" color="blue" @click="goBack()" label="Go Back" size="15px" glossy outline class="q-ma-md q-mx-xl"/>
+
   </div>
 </template>
 
@@ -103,6 +106,9 @@ export default {
       showUpdateDialog: false,
       statusId: null,
       todoData: null,
+      search:'',
+      title:''
+         
     }
   },
 
@@ -139,6 +145,8 @@ export default {
     async getTodo() {
       try {
         const userId = this.$route.params.id
+        this.title = `${this.$route.params.name} todos`
+
         const response = await this.$adminApi.get(`/admin/get_user_todos/${userId}`)
         this.rowsData = response.data.allTodos
         console.log(response.data.allTodos)
@@ -162,9 +170,24 @@ export default {
     parseTags(tags) {
       return Array.isArray(tags) ? tags : JSON.parse(tags)
     },
+    goBack() {
+      this.$router.push('/dashboard/all_todos/')
+    }
   },
   async mounted() {
     await this.getTodo()
+  },
+  computed: {
+    filterRows() {
+      if (!this.search) return this.rowsData; 
+
+      const searchLower = this.search.toLowerCase();
+      return this.rowsData.filter(row =>
+        Object.values(row).some(value =>
+          value && String(value).toLowerCase().includes(searchLower)
+        )
+      );
+    }
   },
 }
 </script>

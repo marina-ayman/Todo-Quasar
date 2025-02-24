@@ -10,16 +10,7 @@
       <div class="text-h5 text-weight-bold">
         <p>
           Oops. Nothing here...        </p>
-        <p>
-          <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
-        unelevated
-        to="/"
-        label="Go Home"
-        no-caps
-      />        </p>
+       
       </div>
     </div>
   </div>

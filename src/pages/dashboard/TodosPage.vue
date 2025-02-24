@@ -1,13 +1,19 @@
 <template>
   <div class="q-pa-md">
-    <h2 class="grey">All Todos</h2>
+
+    <h2 class="grey q-mx-xl">All Todos</h2>
+    <q-input v-model="search" label="Search..." dense outlined class="q-mb-sm q-mx-xl">
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+    </q-input>
     <q-table
       flat
       title="Your ToDo"
-      :rows="rowsData"
+      :rows="filterRows"
       :columns="columns"
       color="primary"
-      row-key="name"
+      row-key="id"
       style="margin: 50px; border-radius: 20px; overflow: hidden"
       class="q-header"
       title-class="title text-weight-bold"
@@ -21,13 +27,7 @@
           label="export"
           @click="exportTable"
         />
-        <q-btn
-          class="q-mx-sm custom-btn"
-          glossy
-          icon="library_add"
-          label="add"
-          @click="showDialog = true"
-        />
+      
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
@@ -72,6 +72,7 @@ function wrapCsvValue(val, formatFn, row) {
 export default {
   data() {
     return {
+      search:'',
       columns: [
         { name: 'id', label: 'ID', align: 'left', field: (row) => row.id, sortable: true },
         { name: 'title', label: 'Title', align: 'left', field: (row) => row.title },
@@ -163,8 +164,20 @@ export default {
       return Array.isArray(tags) ? tags : JSON.parse(tags)
     },
   },
+  computed: {
+    filterRows() {
+      if (!this.search) return this.rowsData; 
+
+      const searchLower = this.search.toLowerCase();
+      return this.rowsData.filter(row =>
+        Object.values(row).some(value =>
+          value && String(value).toLowerCase().includes(searchLower)
+        )
+      );
+    }
+  },
   async mounted() {
     await this.getTodo()
   },
-}
+  }
 </script>
