@@ -1,8 +1,10 @@
 <template>
   <div class="row">
-    <div class="col-5 q-py-xl q-px-md q-header">
-      <div class="text2 ">
-        <h4 class="text-center text2">LOG IN</h4>
+    <div class="col-5 q-pt-xl q-px-md q-header">
+      <div class="text2">
+        <h4 class="text-center text2">
+          <q-img src="~assets/img/hour.png" class="text2 img" width="90px" />LOG IN
+        </h4>
         <q-form @submit.prevent="onLogin" class="q-px-xl q-mx-xl text2">
           <q-input
             v-model="form.email"
@@ -28,9 +30,9 @@
       </div>
     </div>
     <div class="col-7">
-    <div class="flex   flex-center">
-      <q-img  width="50rem" src="~assets/img/reg.png" style="border-radius:50% ;"/>
-    </div>
+      <div class="flex flex-center">
+        <q-img width="50rem" src="~assets/img/reg.png" style="border-radius: 50%" />
+      </div>
     </div>
   </div>
 </template>
@@ -52,7 +54,11 @@ export default {
       const response = await this.$api.post('/web/login', this.form)
       try {
         console.log('Done', response.data)
-        localStorage.setItem('token', response.data.token)
+        const { accessToken, refreshToken } = response.data.token
+
+        localStorage.setItem('token', accessToken)
+        localStorage.setItem('refreshToken', refreshToken)
+
         this.$router.push('/profile')
       } catch (error) {
         if (error.response && error.response.data) {
@@ -93,5 +99,10 @@ export default {
 .registration-form {
   background-color: rgba(116, 171, 205, 0.941);
   border-radius: 8px;
+}
+.img {
+  height: auto;
+  transform: rotate(-45deg);
+  transition: transform 0.5s ease-in-out;
 }
 </style>

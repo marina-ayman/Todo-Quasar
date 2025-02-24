@@ -91,6 +91,8 @@ export default {
           .onOk(async () => {
             const response = await this.$api.delete(`/web/user/${this.user.id}`)
             localStorage.removeItem('token')
+            localStorage.removeItem('refreshToken')
+
             this.$router.push('/auth/reg')
             console.log('Delete', response)
           })

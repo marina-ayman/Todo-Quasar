@@ -3,7 +3,10 @@
     <q-header class="q-mx-xl q-pa-sm q-header" style="border-radius: 0px 0px 15px 15px">
       <q-toolbar>
         <q-toolbar-title>
-          <router-link to="/profile" class="q-mr-xl quick-task"> QuickTask </router-link>
+          <router-link to="/profile" class="q-mr-xl quick-task"> 
+          
+            <q-img src="~assets/img/hour.png" class="text2 img" width="70px" />
+          QuickTask </router-link>
 
           <router-link to="/todos" active-class="text-primary" class="customText text-h6 q-mx-md">
             Todos
@@ -116,6 +119,7 @@ export default {
         email: '',
         age: 0,
       },
+      isDarkMode: this.$q.dark.isActive,
     }
   },
   watch: {
@@ -138,15 +142,38 @@ export default {
       }
     },
     logOut() {
-      localStorage.removeItem('token')
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken")
       this.$router.push('/auth/login')
+    },
+    applyTheme(theme) {
+      this.isDarkMode = theme === "dark";
+      this.$q.dark.set(this.isDarkMode);
+      document.documentElement.setAttribute("data-theme", theme);
+    },
+    trackSystemTheme() {
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+
+      // Listen for changes in system preference
+      systemPrefersDark.addEventListener("change", (event) => {
+        if (!localStorage.getItem("theme")) { // Only change if user hasn't set a preference
+          this.applyTheme(event.matches ? "dark" : "light");
+        }
+      });
     },
   },
   async mounted() {
-    document.body.className = this.themeClass
-    this.rightDrawerOpen = false
     await this.getProfile()
-    this.$q.dark.set(true)
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      this.applyTheme(savedTheme);
+    } else {
+      this.applyTheme(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    }
+    
+    // Start tracking system theme changes
+    this.trackSystemTheme();
   },
   computed: {
     themeClass() {
@@ -155,3 +182,10 @@ export default {
   },
 }
 </script>
+<style>
+.img {
+  height: auto;
+  transform: rotate(-45deg);
+  transition: transform 0.5s ease-in-out;
+}
+</style>

@@ -13,7 +13,10 @@
         />
 
         <q-toolbar-title>
-          <router-link to="/dashboard" class="q-mr-xl quick-task"> QuickTask </router-link>
+          <router-link to="/dashboard" class="q-mr-xl quick-task">
+          
+            <q-img src="~assets/img/hour.png" class="text2 img" width="70px" />
+           QuickTask </router-link>
         </q-toolbar-title>
 
         <div>
@@ -166,7 +169,8 @@ export default {
       }
     },
     logOut() {
-      localStorage.removeItem('adminToken')
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("adminRefreshToken")
       this.$router.push('/dashboard/auth/login')
     },
   },
@@ -189,3 +193,10 @@ export default {
   },
 }
 </script>
+<style>
+.img {
+  height: auto;
+  transform: rotate(-45deg);
+  transition: transform 0.5s ease-in-out;
+}
+</style>

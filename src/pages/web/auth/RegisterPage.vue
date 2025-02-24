@@ -1,8 +1,10 @@
 <template>
-  <div class="row" style="min-heigth:100vh">
+  <div class="row q-ma-xl" >
     <div class="col-5 " >
       <div class="text2">
-        <h4 class="text-center text2">Register</h4>
+        <h4 class="text-center text2">
+          <q-img src="~assets/img/hour.png" class="text2 " width="80px" />
+          Register</h4>
         <q-form @submit.prevent="onSubmit" class="q-px-xl q-mx-xl text2">
           <q-input
             v-model="form.firstName"

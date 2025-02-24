@@ -1,8 +1,11 @@
 <template>
   <div class="row">
-    <div class=" col-6 text-center">
+    <div class="col-6 text-center">
       <q-form @submit.prevent="onLogin" class="q-pa-md q-ma-md" style="width: 50%; margin: 0 auto">
-        <h4 class="text-center text2">{{ $t('LOG IN') }}</h4>
+        <h4 class="text-center text2">
+          <q-img src="~assets/img/hour.png" class="text2 img" width="90px" />
+          {{ $t('LOG IN') }}
+        </h4>
         <q-input
           v-model="form.email"
           label="Email"
@@ -25,7 +28,7 @@
         </div>
       </q-form>
     </div>
-    <div class="q-header  relative-position col-6" style="position: relative; height: 100vh">
+    <div class=" relative-position col-6" style="position: relative; height: 100vh">
       <q-img
         src="~assets/img/profile-transparent.webp"
         style="position: absolute; bottom: 0; right: 0; width: 1000px; height: auto"
@@ -50,7 +53,10 @@ export default {
       const response = await this.$adminApi.post('/web/login', this.form)
       try {
         console.log('Done', response.data)
-        localStorage.setItem('adminToken', response.data.token)
+        const { accessToken, refreshToken } = response.data.token
+        localStorage.setItem('adminToken', accessToken)
+        localStorage.setItem('adminRefreshToken', refreshToken)
+
         this.$router.push('/dashboard')
       } catch (error) {
         if (error.response && error.response.data) {
@@ -86,4 +92,10 @@ export default {
   },
 }
 </script>
-
+<style>
+.img {
+  height: auto;
+  transform: rotate(-45deg);
+  transition: transform 0.5s ease-in-out;
+}
+</style>
