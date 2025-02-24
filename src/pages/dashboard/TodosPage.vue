@@ -39,15 +39,17 @@
 
       <template v-slot:body-cell-tags="props">
         <q-td :props="props">
+        <div style="display: flex; flex-wrap: wrap;width: 250px;">
           <q-chip
             v-for="(tag, index) in parseTags(props.row.tags)"
             :key="index"
             color="blue-3"
             text-color="black"
-            class="q-mr-sm q-mb-sm"
           >
             {{ tag }}
           </q-chip>
+        </div>
+
         </q-td>
       </template>
     </q-table>

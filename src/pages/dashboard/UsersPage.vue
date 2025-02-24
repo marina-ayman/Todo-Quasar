@@ -4,7 +4,7 @@
     <div class="q-py-md q-my-md user-card" v-for="(user, index) in users" :key="index">
       <div class="row">
         <div class="col-9 q-px-xl">
-          <h4 class="q-ma-sm q-px-md title text-weight-bolder" style="border-left: 5px solid blue">
+          <h4 class="cursor-pointer q-ma-sm q-px-md title text-weight-bolder" style="border-left: 5px solid blue" @click="getTasksUser(user.id)">
             {{ user.firstName }} {{ user.lastName }}
           </h4>
           <div class="text-weight-bold q-px-md q-mx-md text2">{{ user.email }}</div>

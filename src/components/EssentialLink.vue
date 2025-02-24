@@ -1,6 +1,7 @@
 <template>
   <q-item clickable tag="a" target="_blank">
-    <router-link :to="props.link" active-class="text-primary" class="customText text-h6 q-mx-md">
+    <router-link :to="props.link" 
+      exact-active-class="text-primary" class="customText text-h6 q-mx-md">
       <q-item-section>
         <q-item-label>
           <q-icon v-if="props.icon" :name="props.icon" />

@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="q-header col-6 text-center">
+    <div class=" col-6 text-center">
       <q-form @submit.prevent="onLogin" class="q-pa-md q-ma-md" style="width: 50%; margin: 0 auto">
         <h4 class="text-center text2">{{ $t('LOG IN') }}</h4>
         <q-input
@@ -25,7 +25,7 @@
         </div>
       </q-form>
     </div>
-    <div class="relative-position col-6" style="position: relative; height: 100vh">
+    <div class="q-header  relative-position col-6" style="position: relative; height: 100vh">
       <q-img
         src="~assets/img/profile-transparent.webp"
         style="position: absolute; bottom: 0; right: 0; width: 1000px; height: auto"
@@ -86,11 +86,4 @@ export default {
   },
 }
 </script>
-<style>
-.q-header {
-  background-color: var(--card-body-light);
-}
-.dark-mode .q-header {
-  background-color: var(--card-body-dark);
-}
-</style>
+

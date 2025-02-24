@@ -30,23 +30,26 @@
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
-          <q-badge :color="getStatusColor(props.row.status)" text-color="white">
-            {{ getStatusText(props.row.status) }}
-          </q-badge>
+          <div style="width: 50px">
+            <q-badge :color="getStatusColor(props.row.status)" text-color="white">
+              {{ getStatusText(props.row.status) }}
+            </q-badge>
+          </div>
         </q-td>
       </template>
 
       <template v-slot:body-cell-tags="props">
         <q-td :props="props">
-          <q-chip
-            v-for="(tag, index) in parseTags(props.row.tags)"
-            :key="index"
-            color="blue-3"
-            text-color="black"
-            class="q-mr-sm q-mb-sm"
-          >
-            {{ tag }}
-          </q-chip>
+          <div style="display: flex; flex-wrap: wrap; width: 250px">
+            <q-chip
+              v-for="(tag, index) in parseTags(props.row.tags)"
+              :key="index"
+              color="blue-3"
+              text-color="black"
+            >
+              {{ tag }}
+            </q-chip>
+          </div>
         </q-td>
       </template>
 
@@ -278,15 +281,3 @@ export default {
   },
 }
 </script>
-<style>
-/* .q-table tbody td {
-    font-size: 19px;
-    color: rgb(0, 77, 153);
-  }
-
-  .custom-table thead tr {
-  background-color: #bbbbbb15;
-  color: rgb(0, 12, 24);
-  font-size: 20px;
-} */
-</style>

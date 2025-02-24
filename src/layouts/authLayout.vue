@@ -1,6 +1,11 @@
 <template :class="themeClass">
+
   <q-layout>
+    <q-toggle v-model="isDarkMode"/>
+   
+    
     <q-page-container>
+
       <router-view />
     </q-page-container>
   </q-layout>
@@ -8,19 +13,25 @@
 
 <script>
 export default {
-  watch: {
-    themeClass(newClass) {
-      document.body.className = newClass
-    },
-    async mounted() {
-      document.body.className = this.themeClass
-      this.$q.dark.set(true)
-    },
-    computed: {
-      themeClass() {
-        return this.$q.dark.isActive ? 'dark-mode' : 'light-mode'
-      },
+  data() {
+    return {
+      isDarkMode: this.$q.dark.isActive,
+      drawer: true
+    };
+  },
+  computed: {
+    themeClass() {
+      return this.isDarkMode ? 'dark-mode' : 'light-mode';
     },
   },
-}
+  watch: {
+    isDarkMode(newVal) {
+      this.$q.dark.set(newVal);
+      document.body.className = this.themeClass;
+    },
+  },
+  mounted() {
+    document.body.className = this.themeClass;
+  },
+};
 </script>

@@ -1,48 +1,36 @@
 <template>
   <div class="row">
-    <div class="col-5 gradient-background q-my-xl q-px-md">
-      <div class="text-purple-14">
-        <h4 class="text-center text-purple-14">LoG IN</h4>
-        <q-form @submit.prevent="onLogin" class="q-px-xl q-mx-xl text-purple-14">
+    <div class="col-5 q-py-xl q-px-md q-header">
+      <div class="text2 ">
+        <h4 class="text-center text2">LOG IN</h4>
+        <q-form @submit.prevent="onLogin" class="q-px-xl q-mx-xl text2">
           <q-input
             v-model="form.email"
             label="Email"
             type="email"
-            label-color="purple-14"
-            color="purple-14"
+            label-color="blue"
+            class="text2"
             :rules="[(val) => (val && val.length > 0) || 'Please type something']"
           />
           <q-input
             v-model="form.password"
             label="Password"
             type="password"
-            label-color="purple-14"
-            color="purple-14"
+            label-color="blue"
+            class="text2"
             :rules="[(val) => (val && val.length > 0) || 'Please type something']"
           />
 
           <div class="q-mt-md text-right">
-            <q-btn label="Register" type="submit" color="purple-14" />
+            <q-btn label="LOG IN" type="submit" glossy class="custom-btn" />
           </div>
         </q-form>
       </div>
     </div>
     <div class="col-7">
-      <q-carousel
-        animated
-        v-model="slide"
-        navigation
-        infinite
-        :autoplay="autoplay"
-        arrows
-        transition-prev="slide-right"
-        transition-next="slide-left"
-        @mouseenter="autoplay = false"
-        @mouseleave="autoplay = true"
-        style="height: 100vh"
-      >
-        <q-carousel-slide :name="1" img-src="~assets/img/th.jfif" />
-      </q-carousel>
+    <div class="flex   flex-center">
+      <q-img  width="50rem" src="~assets/img/reg.png" style="border-radius:50% ;"/>
+    </div>
     </div>
   </div>
 </template>
