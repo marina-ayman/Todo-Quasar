@@ -21,7 +21,7 @@
 
         <div>
           <q-btn class="custom-btn" glossy @click="logOut()"> LOG OUT </q-btn>
-          <q-toggle v-model="$q.dark.isActive" class="q-mb-md text-blue-6 q-pt-md" />
+          <q-toggle v-model="isDarkMode" class="q-mb-md text-blue-6 q-pt-md" />
           <q-btn
             flat
             dense
@@ -145,11 +145,16 @@ export default {
           link: '/dashboard',
         },
       ],
+      isDarkMode: localStorage.getItem("theme")
+        ? localStorage.getItem("theme") === "dark"
+        : this.$q.dark.isActive,
     }
   },
   watch: {
-    bodyClass(newClass) {
-      document.body.className = newClass
+    isDarkMode(newVal) {
+      this.$q.dark.set(newVal);
+      localStorage.setItem("theme", newVal ? "dark" : "light");
+      document.body.className = this.themeClass;
     },
   },
 
@@ -175,17 +180,16 @@ export default {
     },
   },
   async mounted() {
-    document.body.className = this.bodyClass
     this.rightDrawerOpen = false
     await this.getProfile()
-    this.$q.dark.set(true)
+
+    this.$q.dark.set(this.isDarkMode);
+    document.body.className = this.themeClass;
+
   },
   computed: {
-    themeClass() {
-      return this.$q.dark.isActive ? 'dark-mode' : 'light-mode'
-    },
-    bodyClass() {
-      return this.$q.dark.isActive ? 'dark-mode' : 'light-mode'
+   themeClass() {
+      return this.isDarkMode ? 'dark-mode' : 'light-mode';
     },
   },
   components: {

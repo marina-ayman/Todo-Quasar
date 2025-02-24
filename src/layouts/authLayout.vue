@@ -1,11 +1,8 @@
 <template :class="themeClass">
-
   <q-layout>
-    <q-toggle v-model="isDarkMode"/>
-   
+    <q-toggle v-model="isDarkMode" label="Dark Mode"/>
     
     <q-page-container>
-
       <router-view />
     </q-page-container>
   </q-layout>
@@ -15,9 +12,9 @@
 export default {
   data() {
     return {
-      isDarkMode: this.$q.dark.isActive,
-      drawer: true
-    };
+      isDarkMode: localStorage.getItem("theme")
+        ? localStorage.getItem("theme") === "dark"
+        : this.$q.dark.isActive,    };
   },
   computed: {
     themeClass() {
@@ -27,10 +24,12 @@ export default {
   watch: {
     isDarkMode(newVal) {
       this.$q.dark.set(newVal);
+      localStorage.setItem("theme", newVal ? "dark" : "light"); // حفظ الثيم في localStorage
       document.body.className = this.themeClass;
     },
   },
   mounted() {
+    this.$q.dark.set(this.isDarkMode);
     document.body.className = this.themeClass;
   },
 };

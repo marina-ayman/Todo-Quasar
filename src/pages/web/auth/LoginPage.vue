@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="col-7">
-      <div class="flex flex-center">
+      <div class="flex flex-center ">
         <q-img width="50rem" src="~assets/img/reg.png" style="border-radius: 50%" />
       </div>
     </div>
@@ -96,10 +96,6 @@ export default {
 </script>
 
 <style scoped>
-.registration-form {
-  background-color: rgba(116, 171, 205, 0.941);
-  border-radius: 8px;
-}
 .img {
   height: auto;
   transform: rotate(-45deg);

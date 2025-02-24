@@ -5,7 +5,7 @@
         <q-toolbar-title>
           <router-link to="/profile" class="q-mr-xl quick-task"> 
           
-            <q-img src="~assets/img/hour.png" class="text2 img" width="70px" />
+            <q-img src="~assets/img/hour.png" class="text2 img" width="90px" />
           QuickTask </router-link>
 
           <router-link to="/todos" active-class="text-primary" class="customText text-h6 q-mx-md">
@@ -18,7 +18,7 @@
 
         <div>
           <q-btn class="custom-btn" @click="logOut()"> LOG OUT </q-btn>
-          <q-toggle v-model="$q.dark.isActive" class="q-mb-md text-blue-6 q-pt-md" />
+          <q-toggle v-model="isDarkMode" class="q-mb-md text-blue-6 q-pt-md" />
           <q-btn
             flat
             dense
@@ -119,68 +119,50 @@ export default {
         email: '',
         age: 0,
       },
-      isDarkMode: this.$q.dark.isActive,
-    }
+      isDarkMode: localStorage.getItem("theme")
+        ? localStorage.getItem("theme") === "dark"
+        : this.$q.dark.isActive,
+    };
   },
   watch: {
-    themeClass(newClass) {
-      document.body.className = newClass
+    isDarkMode(newVal) {
+      this.$q.dark.set(newVal);
+      localStorage.setItem("theme", newVal ? "dark" : "light");
+      document.body.className = this.themeClass;
     },
   },
-
   methods: {
     toggleRightDrawer() {
-      this.rightDrawerOpen = !this.rightDrawerOpen
+      this.rightDrawerOpen = !this.rightDrawerOpen;
     },
     async getProfile() {
       try {
-        const response = await this.$api.get('/web/profile')
-        console.log('Donmmm', response)
-        this.user = response.data.profile
+        const response = await this.$api.get('/web/profile');
+        console.log('Profile Data:', response);
+        this.user = response.data.profile;
       } catch (error) {
-        console.error('error', error.response ? error.response.data : error.message)
+        console.error('Error fetching profile:', error.response ? error.response.data : error.message);
       }
     },
     logOut() {
       localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken")
-      this.$router.push('/auth/login')
-    },
-    applyTheme(theme) {
-      this.isDarkMode = theme === "dark";
-      this.$q.dark.set(this.isDarkMode);
-      document.documentElement.setAttribute("data-theme", theme);
-    },
-    trackSystemTheme() {
-      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-
-      // Listen for changes in system preference
-      systemPrefersDark.addEventListener("change", (event) => {
-        if (!localStorage.getItem("theme")) { // Only change if user hasn't set a preference
-          this.applyTheme(event.matches ? "dark" : "light");
-        }
-      });
+      localStorage.removeItem("refreshToken");
+      this.$router.push('/auth/login');
     },
   },
   async mounted() {
-    await this.getProfile()
-
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      this.applyTheme(savedTheme);
-    } else {
-      this.applyTheme(window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    }
+    await this.getProfile();
     
-    // Start tracking system theme changes
-    this.trackSystemTheme();
+    this.$q.dark.set(this.isDarkMode);
+    document.body.className = this.themeClass;
   },
   computed: {
     themeClass() {
-      return this.$q.dark.isActive ? 'dark-mode' : 'light-mode'
+      return this.isDarkMode ? 'dark-mode' : 'light-mode';
     },
   },
-}
+};
+
 </script>
 <style>
 .img {
