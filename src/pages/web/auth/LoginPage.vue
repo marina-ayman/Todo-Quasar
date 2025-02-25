@@ -23,11 +23,16 @@
             :rules="[(val) => (val && val.length > 0) || 'Please type something']"
           />
 
-          <div class="q-mt-md text-right">
+          <div class="q-mt-md text-center">
             <q-btn label="LOG IN" type="submit" glossy class="custom-btn" />
           </div>
         </q-form>
       </div>
+      <div class="text-center q-ma-md">
+        <q-img src="~assets/img/hour.png" class="text2 img" width="30px" />
+        <router-link to="/auth/reg" class="text2"> Go to Register to create acount</router-link>
+      </div>
+
     </div>
     <div class="col-7">
       <div class="flex flex-center ">

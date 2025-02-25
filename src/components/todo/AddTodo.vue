@@ -167,7 +167,7 @@ export default {
         const response = await this.$api.post('/web/todo', this.taskTodo)
         await this.getTodo()
         console.log('Done', this.taskTodo)
-        this.localDialog = false
+         this.$emit('closeDialog')
         this.loadBtn = false
         this.$q.notify({
           type: 'positive',
@@ -197,14 +197,14 @@ export default {
             type: 'negative',
             message: `Error: No response received from the server.`,
           })
-          this.localDialog = false
+           this.$emit('closeDialog')
         } else {
           console.error('Error', error.message)
           this.$q.notify({
             type: 'negative',
             message: `Error: ${error.message}`,
           })
-          this.localDialog = false
+           this.$emit('closeDialog')
         }
 
         this.loadBtn = false

@@ -1,6 +1,6 @@
 <template :class="themeClass">
   <q-layout>
-    <q-toggle v-model="isDarkMode" label="Dark Mode"/>
+    <!-- <q-toggle v-model="isDarkMode" label="Dark Mode"/> -->
     
     <q-page-container>
       <router-view />

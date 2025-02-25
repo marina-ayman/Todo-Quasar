@@ -276,7 +276,6 @@ export default {
     },
   },
   async mounted() {
-    this.$q.dark.set(true)
     await this.getTodo()
   },
 }

@@ -50,10 +50,14 @@
             ]"
           />
 
-          <div class="q-mt-md text-right">
+          <div class="q-mt-md text-center">
             <q-btn label="Register" type="submit" class="custom-btn" glossy />
           </div>
         </q-form>
+        <div class="text-center q-ma-md">
+        <q-img src="~assets/img/hour.png" class="text2 img" width="30px" />
+        <router-link to="/auth/login" class="text2"> if you have acount Go to Login</router-link>
+      </div>
       </div>
     </div>
     <div class="col-7 q-header">

@@ -50,7 +50,7 @@ export default {
   },
   methods: {
     async onLogin() {
-      const response = await this.$adminApi.post('/web/login', this.form)
+      const response = await this.$adminApi.post('/admin/login', this.form)
       try {
         console.log('Done', response.data)
         const { accessToken, refreshToken } = response.data.token

@@ -1,6 +1,5 @@
 <template>
   <div class="q-pa-md">
-
     <h2 class="grey q-mx-xl">All Todos</h2>
     <q-input v-model="search" label="Search..." dense outlined class="q-mb-sm q-mx-xl">
       <template v-slot:prepend>
@@ -27,7 +26,13 @@
           label="export"
           @click="exportTable"
         />
-      
+        <q-btn
+          class="q-mx-sm custom-btn"
+          glossy
+          icon="library_add"
+          label="add"
+          @click="showDialog = true"
+        />
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
@@ -39,25 +44,61 @@
 
       <template v-slot:body-cell-tags="props">
         <q-td :props="props">
-        <div style="display: flex; flex-wrap: wrap;width: 250px;">
-          <q-chip
-            v-for="(tag, index) in parseTags(props.row.tags)"
-            :key="index"
-            color="blue-3"
-            text-color="black"
-          >
-            {{ tag }}
-          </q-chip>
-        </div>
+          <div style="display: flex; flex-wrap: wrap; width: 250px">
+            <q-chip
+              v-for="(tag, index) in parseTags(props.row.tags)"
+              :key="index"
+              color="blue-3"
+              text-color="black"
+            >
+              {{ tag }}
+            </q-chip>
+          </div>
+        </q-td>
+      </template>
 
+      <template v-slot:body-cell-action="props">
+        <q-td :props="props">
+          <q-btn
+            color="primary"
+            class="q-ml-sm q-pa-sm"
+            flat
+            icon="edit"
+            size="md"
+            @click="editTodo(props.row)"
+          />
+          <q-btn
+            color="red"
+            icon="delete"
+            size="md"
+            flat
+            class="q-ml-sm q-pa-sm"
+            @click="deleteTodo(props.row.id)"
+          />
         </q-td>
       </template>
     </q-table>
   </div>
+
+  <add-todo
+    :dialogVisible="showDialog"
+    @closeDialog="showDialog = false"
+    :getTodo="getTodo"
+    :statusId="statusId"
+  ></add-todo>
+
+  <edit-todo
+    :dialogVisible="showUpdateDialog"
+    @closeDialog="showUpdateDialog = false"
+    :getTodo="getTodo"
+    :todoData="todoData"
+  ></edit-todo>
 </template>
 
 <script>
 import { exportFile } from 'quasar'
+import AddTodo from '../../components/admin/todo/AddTodo.vue'
+import EditTodo from '../../components/admin/todo/editTodo.vue'
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val
@@ -72,7 +113,7 @@ function wrapCsvValue(val, formatFn, row) {
 export default {
   data() {
     return {
-      search:'',
+      search: '',
       columns: [
         { name: 'id', label: 'ID', align: 'left', field: (row) => row.id, sortable: true },
         { name: 'title', label: 'Title', align: 'left', field: (row) => row.title },
@@ -80,9 +121,16 @@ export default {
         { name: 'status', label: 'Status', align: 'left', field: (row) => row.status },
         {
           name: 'user',
-          label: 'User ID',
+          label: 'User',
           align: 'left',
-          field: (row) => row.User.firstName + ' ' + row.User.lastName,
+          field: (row) => (row.User ? row.User.email : ''),
+          classes: 'text2',
+        },
+        {
+          name: 'createdBy',
+          label: 'Created By',
+          align: 'left',
+          field: (row) => (row.CreatedByUser ? row.CreatedByUser.email : ''),
           classes: 'text2',
         },
         {
@@ -97,17 +145,20 @@ export default {
           align: 'left',
           field: (row) => row.formattedToDate,
         },
+        { name: 'action', label: 'Action', align: 'center', field: (row) => row.id },
       ],
 
       rowsData: [],
       showDialog: false,
-      showDialogStatus: false,
       showUpdateDialog: false,
       statusId: null,
       todoData: null,
     }
   },
-
+  components: {
+    AddTodo,
+    EditTodo,
+  },
   methods: {
     exportTable() {
       const content = [this.columns.map((col) => wrapCsvValue(col.label))]
@@ -163,21 +214,72 @@ export default {
     parseTags(tags) {
       return Array.isArray(tags) ? tags : JSON.parse(tags)
     },
+    async editTodo(taskTodo) {
+      this.todoData = taskTodo
+      console.log('taskTodo', this.todoData)
+      this.showUpdateDialog = true
+    },
+    async deleteTodo(id) {
+      try {
+        this.$q
+          .dialog({
+            title: 'Confirm',
+            message: `Would you want To delete Your Task ?`,
+            cancel: true,
+            persistent: true,
+          })
+          .onOk(async () => {
+            const response = await this.$adminApi.delete(`/admin/todo/${id}`)
+            await this.getTodo()
+            console.log('Delete', response)
+          })
+          .onCancel(() => {})
+      } catch (error) {
+        if (error.response && error.response.data) {
+          const errorData = error.response.data
+          if (errorData.errors && Array.isArray(errorData.errors)) {
+            errorData.errors.forEach((err) => {
+              this.$q.notify({
+                type: 'negative',
+                message: `Error: ${err}`,
+              })
+            })
+          } else {
+            this.$q.notify({
+              type: 'negative',
+              message: `Error: ${errorData.message || 'Unknown error'}`,
+            })
+          }
+        } else if (error.request) {
+          console.error('No response received:', error.request)
+          this.$q.notify({
+            type: 'negative',
+            message: `Error: No response received from the server.`,
+          })
+        } else {
+          console.error('Error', error.message)
+          this.$q.notify({
+            type: 'negative',
+            message: `Error: ${error.message}`,
+          })
+        }
+      }
+    },
   },
   computed: {
     filterRows() {
-      if (!this.search) return this.rowsData; 
+      if (!this.search) return this.rowsData
 
-      const searchLower = this.search.toLowerCase();
-      return this.rowsData.filter(row =>
-        Object.values(row).some(value =>
-          value && String(value).toLowerCase().includes(searchLower)
-        )
-      );
-    }
+      const searchLower = this.search.toLowerCase()
+      return this.rowsData.filter((row) =>
+        Object.values(row).some(
+          (value) => value && String(value).toLowerCase().includes(searchLower),
+        ),
+      )
+    },
   },
   async mounted() {
     await this.getTodo()
   },
-  }
+}
 </script>

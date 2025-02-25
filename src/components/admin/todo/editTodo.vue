@@ -118,6 +118,24 @@
               </q-icon>
             </template>
           </q-input>
+          <q-select
+            v-model="taskTodo.userId"
+            :options="allUsers"
+            label="Select User"
+            :option-value="'id'"
+            :option-label="'email'"
+            rounded
+            color="blue-12"
+            outlined
+            emit-value
+            map-options
+          >
+            <template v-slot:selected>
+              <p v-if="selectedUser">
+                <strong>{{ selectedUser.email }}</strong>
+              </p>
+            </template>
+          </q-select>
 
           <q-btn type="submit" :loading="loadBtn" label="Save" class="q-mt-md" color="blue-4">
             <template v-slot:loading>
@@ -140,8 +158,10 @@ export default {
         fromDate: '',
         toDate: '',
         tags: [],
+        userId: null,
       },
       localDialog: false,
+      allUsers: [],
     }
   },
   props: ['dialogVisible', 'getTodo', 'todoData'],
@@ -166,6 +186,7 @@ export default {
   },
   async mounted() {
     await this.getTodoData()
+    await this.getUsers()
   },
   methods: {
     async getTodoData() {
@@ -189,10 +210,10 @@ export default {
     async saveData() {
       this.loadBtn = true
       try {
-        const response = await this.$api.patch(`/web/todo/${this.todoData.id}`, this.taskTodo)
+        const response = await this.$adminApi.patch(`/admin/todo/${this.todoData.id}`, this.taskTodo)
         await this.getTodo()
         console.log('Done', this.taskTodo)
-         this.$emit('closeDialog')
+        this.$emit('closeDialog')
         this.loadBtn = false
         this.$q.notify({
           type: 'positive',
@@ -222,19 +243,34 @@ export default {
             type: 'negative',
             message: `Error: No response received from the server.`,
           })
-           this.$emit('closeDialog')
+          this.$emit('closeDialog')
         } else {
           console.error('Error', error.message)
           this.$q.notify({
             type: 'negative',
             message: `Error: ${error.message}`,
           })
-           this.$emit('closeDialog')
+          this.$emit('closeDialog')
         }
 
         this.loadBtn = false
       }
     },
+    async getUsers() {
+      try {
+        const response = await this.$adminApi.get('/admin/get_all_todos')
+        this.allUsers = response.data.allUsers
+        console.log('mmm', this.allUsers)
+      } catch (error) {
+        console.error('error', error.response ? error.response.data : error.message)
+      }
+    },
   },
+  computed: {
+  selectedUser() {
+    return this.allUsers.find(user => user.id === this.taskTodo.userId) || null;
+  },
+ 
+},
 }
 </script>
