@@ -171,7 +171,7 @@ export default {
       return Array.isArray(tags) ? tags : JSON.parse(tags)
     },
     goBack() {
-      this.$router.push('/dashboard/all_todos/')
+    this.$router.push('/dashboard')
     }
   },
   async mounted() {

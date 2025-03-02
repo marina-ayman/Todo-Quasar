@@ -1,6 +1,6 @@
 <template>
   <div class="q-pa-md">
-    <h2 class="grey q-mx-xl">All Todos</h2>
+    <h2 class="grey q-mx-xl">All Roles</h2>
     <q-input v-model="search" label="Search..." dense outlined class="q-mb-sm q-mx-xl">
       <template v-slot:prepend>
         <q-icon name="search" />
@@ -8,7 +8,7 @@
     </q-input>
     <q-table
       flat
-      title="Your ToDo"
+      title="Your Roles"
       :rows="filterRows"
       :columns="columns"
       color="primary"
@@ -31,75 +31,56 @@
           glossy
           icon="library_add"
           label="add"
-          @click="showDialog = true"
+           @click="addRole"
         />
       </template>
-      <template v-slot:body-cell-status="props">
-        <q-td :props="props">
-          <q-badge :color="getStatusColor(props.row.status)" text-color="white">
-            {{ getStatusText(props.row.status) }}
-          </q-badge>
-        </q-td>
-      </template>
+     
 
-      <template v-slot:body-cell-tags="props">
-        <q-td :props="props">
-          <div style="display: flex; flex-wrap: wrap; width: 250px">
-            <q-chip
-              v-for="(tag, index) in parseTags(props.row.tags)"
-              :key="index"
-              color="blue-3"
-              text-color="black"
-            >
-              {{ tag }}
-            </q-chip>
-          </div>
-        </q-td>
-      </template>
+      
 
       <template v-slot:body-cell-action="props">
         <q-td :props="props">
-          <!--  -->
-          <q-btn v-if="can('update_todo')"
+          <!-- v-if="hasPermission('update_todo')" -->
+          <q-btn
             color="primary"
             class="q-ml-sm q-pa-sm"
             flat
             icon="edit"
             size="md"
-            @click="editTodo(props.row)"
-          ></q-btn>
+            @click="editRole(props.row)"
+          />
           <q-btn
             color="red"
             icon="delete"
             size="md"
             flat
             class="q-ml-sm q-pa-sm"
-            @click="deleteTodo(props.row.id)"
+            @click="deleteRole(props.row.id)"
           />
         </q-td>
       </template>
     </q-table>
   </div>
 
-  <add-todo
+  <!-- <add-role
     :dialogVisible="showDialog"
     @closeDialog="showDialog = false"
-    :getTodo="getTodo"
-    :statusId="statusId"
-  ></add-todo>
+    :getRoles="getRoles"
+  ></add-role>
 
-  <edit-todo
+  <edit-role
     :dialogVisible="showUpdateDialog"
     @closeDialog="showUpdateDialog = false"
-    :getTodo="getTodo"
-    :todoData="todoData"
-  ></edit-todo>
+    :getRoles="getRoles"
+    :roleData="roleData"
+  ></edit-role> -->
 </template>
 
 <script>
+
 import { exportFile } from 'quasar'
-import AddTodo from '../../components/admin/todo/AddTodo.vue'
-import EditTodo from '../../components/admin/todo/editTodo.vue'
+// import AddRole from '../../components/admin/acl/role/AddRole.vue'
+// import EditRole from '../../components/admin/acl/role/editRole.vue'
 // import { mapGetters } from 'vuex'
 
 function wrapCsvValue(val, formatFn, row) {
@@ -118,48 +99,20 @@ export default {
       search: '',
       columns: [
         { name: 'id', label: 'ID', align: 'left', field: (row) => row.id, sortable: true },
-        { name: 'title', label: 'Title', align: 'left', field: (row) => row.title },
-        { name: 'tags', label: 'Tags', align: 'left', field: (row) => row.tags },
-        { name: 'status', label: 'Status', align: 'left', field: (row) => row.status },
-        {
-          name: 'user',
-          label: 'User',
-          align: 'left',
-          field: (row) => (row.User ? row.User.email : ''),
-          classes: 'text2',
-        },
-        {
-          name: 'createdBy',
-          label: 'Created By',
-          align: 'left',
-          field: (row) => (row.CreatedByUser ? row.CreatedByUser.email : ''),
-          classes: 'text2',
-        },
-        {
-          name: 'formattedFromDate',
-          label: 'From Date',
-          align: 'left',
-          field: (row) => row.formattedFromDate,
-        },
-        {
-          name: 'formattedToDate',
-          label: 'To Date',
-          align: 'left',
-          field: (row) => row.formattedToDate,
-        },
+        { name: 'key', label: 'Role Name', align: 'left', field: (row) => row.key },
+        { name: 'value', label: 'Description', align: 'left', field: (row) => row.value },
         { name: 'action', label: 'Action', align: 'center', field: (row) => row.id },
       ],
 
       rowsData: [],
       showDialog: false,
       showUpdateDialog: false,
-      statusId: null,
-      todoData: null,
+      roleData: null,
     }
   },
   components: {
-    AddTodo,
-    EditTodo,
+    // AddRole,
+    // EditRole,
   },
   methods: {
     exportTable() {
@@ -191,47 +144,30 @@ export default {
         })
       }
     },
-    async getTodo() {
+    async getRoles() {
       try {
-        const response = await this.$adminApi.get('/admin/get_all_todos')
-        this.rowsData = response.data.allTodos
-        console.log(response.data.allTodos)
+        const response = await this.$adminApi.get('/acl/roles')
+        this.rowsData = response.data
       } catch (error) {
         console.error('error', error.response ? error.response.data : error.message)
       }
     },
-
-    getStatusText(status) {
-      return status === 0
-        ? 'TODO'
-        : status === 1
-          ? 'ON PROGRESS'
-          : status === 2
-            ? 'DONE'
-            : 'UNKNOWN'
+  
+    async editRole(role) {
+      this.$router.push(`/dashboard/edit_role/${role.id}`)
     },
-    getStatusColor(status) {
-      return status === 0 ? 'blue' : status === 1 ? 'pink' : status === 2 ? 'green' : 'grey'
-    },
-    parseTags(tags) {
-      return Array.isArray(tags) ? tags : JSON.parse(tags)
-    },
-    async editTodo(taskTodo) {
-      this.todoData = taskTodo
-      this.showUpdateDialog = true
-    },
-    async deleteTodo(id) {
+    async deleteRole(id) {
       try {
         this.$q
           .dialog({
             title: 'Confirm',
-            message: `Would you want To delete Your Task ?`,
+            message: `Would you want To delete this Role ?`,
             cancel: true,
             persistent: true,
           })
           .onOk(async () => {
-            const response = await this.$adminApi.delete(`/admin/todo/${id}`)
-            await this.getTodo()
+            const response = await this.$adminApi.delete(`/acl/roles/${id}`)
+            await this.getRoles()
             console.log('Delete', response)
           })
           .onCancel(() => {})
@@ -266,14 +202,13 @@ export default {
         }
       }
     },
-    async can(perm) {
-      return await this.$store.dispatch('auth/hasPermission', perm)
-    },
-
+    addRole(){
+      this.$router.push('/dashboard/add_role')
+    }
   },
   computed: {
-  
-  
+    // ...mapGetters(['hasPermission']),
+
     filterRows() {
       if (!this.search) return this.rowsData
 
@@ -284,11 +219,11 @@ export default {
         ),
       )
     },
-
   },
   async mounted() {
-    await this.getTodo()
-    
-  },
+    await this.getRoles()
+    // this.$eventBus.emit("getRoles", this.rowsData)
+    },
+
 }
 </script>

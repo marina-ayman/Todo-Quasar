@@ -28,7 +28,7 @@
         </div>
       </q-form>
     </div>
-    <div class=" relative-position col-6 q-header" style="position: relative; height: 100vh">
+    <div class="relative-position col-6 q-header" style="position: relative; height: 100vh">
       <q-img
         src="~assets/img/profile-transparent.webp"
         style="position: absolute; bottom: 0; right: 0; width: 1000px; height: auto"
@@ -37,6 +37,7 @@
   </div>
 </template>
 <script>
+// import { mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -49,13 +50,29 @@ export default {
     }
   },
   methods: {
+    // ...mapActions(['login']),
     async onLogin() {
       const response = await this.$adminApi.post('/admin/login', this.form)
       try {
         console.log('Done', response.data)
         const { accessToken, refreshToken } = response.data.token
+        // console.log('Done', response.data)
         localStorage.setItem('adminToken', accessToken)
         localStorage.setItem('adminRefreshToken', refreshToken)
+
+        // const user = {
+        //   id: response.data.user.id,
+        //   firstName: response.data.user.firstName,
+        //   lastName: response.data.user.lastName,
+        //   email: response.data.user.email,
+        //   age: response.data.user.age,
+        //   isAdmin: response.data.user.isAdmin,
+        //   role_id: response.data.user.role_id,
+        // }
+        // await this.login( {
+        //   user: user,
+        //   permissions: response.data.permissions,
+        // })
 
         this.$router.push('/dashboard')
       } catch (error) {
@@ -89,6 +106,7 @@ export default {
         }
       }
     },
+
   },
 }
 </script>

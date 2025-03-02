@@ -24,7 +24,7 @@ export default {
   watch: {
     isDarkMode(newVal) {
       this.$q.dark.set(newVal);
-      localStorage.setItem("theme", newVal ? "dark" : "light"); // حفظ الثيم في localStorage
+      localStorage.setItem("theme", newVal ? "dark" : "light");
       document.body.className = this.themeClass;
     },
   },

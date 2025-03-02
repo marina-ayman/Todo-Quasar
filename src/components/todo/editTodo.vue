@@ -160,6 +160,7 @@ export default {
           this.taskTodo.tags = Array.isArray(newVal.tags) ? newVal.tags : JSON.parse(newVal.tags)
           this.taskTodo.fromDate = newVal.formattedFromDate
           this.taskTodo.toDate = newVal.formattedToDate
+          this.taskTodo.userId = newVal.userId
         }
       },
     },

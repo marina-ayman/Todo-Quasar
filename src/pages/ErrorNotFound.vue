@@ -8,8 +8,9 @@
        {{ $t('403') }}
       </div>
       <div class="text-h5 text-weight-bold">
-        <p>
-          Oops. Nothing here...        </p>
+        <p>  Oops. Nothing here...    </p>
+          
+          <q-btn color="white" class="text-blue" label="Go Back" @click="goBack"/>
        
       </div>
     </div>
@@ -19,6 +20,10 @@
 <script>
 
 export default {
+  goBack() {
+      // this.$router.go(-1)
+      this.$router.push('/dashboard')
+    },
 }
 </script>
 

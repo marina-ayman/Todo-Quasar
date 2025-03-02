@@ -5,7 +5,7 @@
         <q-toolbar-title>
           <router-link to="/profile" class="q-mr-xl quick-task"> 
           
-            <q-img src="~assets/img/hour.png" class="text2 img" width="90px" />
+            <q-img src="~assets/img/hour.png" class="text2 imgg" width="90px" />
           QuickTask </router-link>
 
           <router-link to="/todos" active-class="text-primary" class="customText text-h6 q-mx-md">
@@ -151,10 +151,10 @@ export default {
     },
   },
   async mounted() {
-    await this.getProfile();
-    
     this.$q.dark.set(this.isDarkMode);
     document.body.className = this.themeClass;
+    await this.getProfile();
+
   },
   computed: {
     themeClass() {
@@ -165,7 +165,7 @@ export default {
 
 </script>
 <style>
-.img {
+.imgg {
   height: auto;
   transform: rotate(-45deg);
   transition: transform 0.5s ease-in-out;

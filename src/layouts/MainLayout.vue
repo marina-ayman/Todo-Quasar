@@ -135,14 +135,19 @@ export default {
       },
       linksList: [
         {
+          title: 'All Users',
+          icon: 'code',
+          link: '/dashboard',
+        },
+        {
           title: 'All Todos',
           icon: 'school',
           link: '/dashboard/all_todos/',
         },
         {
-          title: 'All Users',
+          title: 'All Roles',
           icon: 'code',
-          link: '/dashboard',
+          link: '/dashboard/roles',
         },
       ],
       isDarkMode: localStorage.getItem("theme")
@@ -180,11 +185,12 @@ export default {
     },
   },
   async mounted() {
-    this.rightDrawerOpen = false
-    await this.getProfile()
 
     this.$q.dark.set(this.isDarkMode);
     document.body.className = this.themeClass;
+
+    this.rightDrawerOpen = false
+    await this.getProfile()
 
   },
   computed: {
@@ -197,6 +203,7 @@ export default {
   },
 }
 </script>
+
 <style>
 .img {
   height: auto;
