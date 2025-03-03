@@ -37,7 +37,8 @@
   </div>
 </template>
 <script>
-// import { mapActions } from 'vuex'
+import Permissions from 'src/services/Permission'
+
 export default {
   data() {
     return {
@@ -56,23 +57,23 @@ export default {
       try {
         console.log('Done', response.data)
         const { accessToken, refreshToken } = response.data.token
-        // console.log('Done', response.data)
+
         localStorage.setItem('adminToken', accessToken)
         localStorage.setItem('adminRefreshToken', refreshToken)
+        const user = {
+          id: response.data.user.id,
+          firstName: response.data.user.firstName,
+          lastName: response.data.user.lastName,
+          email: response.data.user.email,
+          age: response.data.user.age,
+          isAdmin: response.data.user.isAdmin,
+          role_id: response.data.user.role_id,
+        }
+        Permissions.setUser(user)
+        Permissions.setPermissions(response.data.user.permissions)
 
-        // const user = {
-        //   id: response.data.user.id,
-        //   firstName: response.data.user.firstName,
-        //   lastName: response.data.user.lastName,
-        //   email: response.data.user.email,
-        //   age: response.data.user.age,
-        //   isAdmin: response.data.user.isAdmin,
-        //   role_id: response.data.user.role_id,
-        // }
-        // await this.login( {
-        //   user: user,
-        //   permissions: response.data.permissions,
-        // })
+        console.log('User:', Permissions.getUser())
+        console.log('Permissions:', Permissions.getPermissions())
 
         this.$router.push('/dashboard')
       } catch (error) {
@@ -106,7 +107,6 @@ export default {
         }
       }
     },
-
   },
 }
 </script>

@@ -19,29 +19,20 @@
       table-header-class="q-header2 text-weight-bolder"
     >
       <template v-slot:top-right>
-        <q-btn
+        <q-btn v-if="can('export_role')"
           class="q-mx-sm custom-btn"
           glossy
           icon="archive"
           label="export"
           @click="exportTable"
         />
-        <q-btn
-          class="q-mx-sm custom-btn"
-          glossy
-          icon="library_add"
-          label="add"
-           @click="addRole"
-        />
+        <q-btn v-if="can('create_role')"
+        class="q-mx-sm custom-btn" glossy icon="library_add" label="add" @click="addRole" />
       </template>
-     
-
-      
 
       <template v-slot:body-cell-action="props">
         <q-td :props="props">
-          <!-- v-if="hasPermission('update_todo')" -->
-          <q-btn
+          <q-btn  v-if="can('update_role')"
             color="primary"
             class="q-ml-sm q-pa-sm"
             flat
@@ -49,7 +40,7 @@
             size="md"
             @click="editRole(props.row)"
           />
-          <q-btn
+          <q-btn  v-if="can('delete_role')"
             color="red"
             icon="delete"
             size="md"
@@ -61,27 +52,11 @@
       </template>
     </q-table>
   </div>
-
-  <!-- <add-role
-    :dialogVisible="showDialog"
-    @closeDialog="showDialog = false"
-    :getRoles="getRoles"
-  ></add-role>
-
-  <edit-role
-    :dialogVisible="showUpdateDialog"
-    @closeDialog="showUpdateDialog = false"
-    :getRoles="getRoles"
-    :roleData="roleData"
-  ></edit-role> -->
 </template>
 
 <script>
-
 import { exportFile } from 'quasar'
-// import AddRole from '../../components/admin/acl/role/AddRole.vue'
-// import EditRole from '../../components/admin/acl/role/editRole.vue'
-// import { mapGetters } from 'vuex'
+import Permissions from 'src/services/Permission'
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val
@@ -152,7 +127,7 @@ export default {
         console.error('error', error.response ? error.response.data : error.message)
       }
     },
-  
+
     async editRole(role) {
       this.$router.push(`/dashboard/edit_role/${role.id}`)
     },
@@ -202,9 +177,12 @@ export default {
         }
       }
     },
-    addRole(){
+    addRole() {
       this.$router.push('/dashboard/add_role')
-    }
+    },
+    can(perm) {
+      return Permissions.hasPermission(perm)
+    },
   },
   computed: {
     // ...mapGetters(['hasPermission']),
@@ -223,7 +201,6 @@ export default {
   async mounted() {
     await this.getRoles()
     // this.$eventBus.emit("getRoles", this.rowsData)
-    },
-
+  },
 }
 </script>

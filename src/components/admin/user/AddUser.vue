@@ -199,16 +199,12 @@ export default {
     },
   },
   async mounted() {
-  //   await this.$eventBus.on("getRoles", (data) => {
-  //     this.rowsData = data;
-  //     console.log(" data in page1:", this.rowsData);
-  //   });
 
   await this.getRoles()
   },
-  // beforeUnmount() {
-  //   this.$eventBus.off("getRoles")
-  // }
+  beforeUnmount() {
+    this.$eventBus.off("getRoles")
+  }
 
 
 }

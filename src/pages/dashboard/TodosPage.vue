@@ -26,7 +26,7 @@
           label="export"
           @click="exportTable"
         />
-        <q-btn
+        <q-btn v-if="can('create_todo')"
           class="q-mx-sm custom-btn"
           glossy
           icon="library_add"
@@ -59,7 +59,6 @@
 
       <template v-slot:body-cell-action="props">
         <q-td :props="props">
-          <!--  -->
           <q-btn v-if="can('update_todo')"
             color="primary"
             class="q-ml-sm q-pa-sm"
@@ -68,7 +67,7 @@
             size="md"
             @click="editTodo(props.row)"
           ></q-btn>
-          <q-btn
+          <q-btn v-if="can('delete_todo')"
             color="red"
             icon="delete"
             size="md"
@@ -100,7 +99,8 @@
 import { exportFile } from 'quasar'
 import AddTodo from '../../components/admin/todo/AddTodo.vue'
 import EditTodo from '../../components/admin/todo/editTodo.vue'
-// import { mapGetters } from 'vuex'
+import Permissions from 'src/services/Permission'
+
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val
@@ -266,14 +266,13 @@ export default {
         }
       }
     },
-    async can(perm) {
-      return await this.$store.dispatch('auth/hasPermission', perm)
+    can(perm) {
+      console.log(Permissions.hasPermission(perm))
+      return Permissions.hasPermission(perm)
     },
 
   },
   computed: {
-  
-  
     filterRows() {
       if (!this.search) return this.rowsData
 
@@ -288,7 +287,6 @@ export default {
   },
   async mounted() {
     await this.getTodo()
-    
   },
 }
 </script>

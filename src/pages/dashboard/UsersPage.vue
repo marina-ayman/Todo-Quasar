@@ -6,6 +6,7 @@
       </div>
       <div class="col text-right">
         <q-btn
+          v-if="can('create_user')"
           class="q-mx-sm custom-btn"
           glossy
           icon="library_add"
@@ -23,9 +24,17 @@
       <div class="row">
         <div class="col-9 q-px-xl">
           <h4
+            v-if="can('view_user_todos')"
             class="cursor-pointer q-ma-sm q-px-md title text-weight-bolder"
             style="border-left: 5px solid blue"
             @click="getTasksUser(user.id, user.firstName)"
+          >
+            {{ user.firstName }} {{ user.lastName }}
+          </h4>
+          <h4
+            v-if="!can('view_user_todos')"
+            class="cursor-pointer q-ma-sm q-px-md title text-weight-bolder"
+            style="border-left: 5px solid blue"
           >
             {{ user.firstName }} {{ user.lastName }}
           </h4>
@@ -37,6 +46,7 @@
             atque esse earum. Ut alias numquam itaque
           </p>
           <q-btn
+            v-if="can('update_user')"
             color="primary"
             class="q-ml-sm q-pa-sm"
             flat
@@ -45,6 +55,7 @@
             @click="editUser(user)"
           ></q-btn>
           <q-btn
+            v-if="can('delete_user')"
             color="red"
             icon="delete"
             size="md"
@@ -55,6 +66,7 @@
         </div>
         <div class="col-3 text-right">
           <q-btn
+            v-if="can('view_user_todos')"
             icon="arrow_forward_ios"
             class="custom-btn q-px-md q-mx-sm"
             style="min-height: 190px"
@@ -81,6 +93,7 @@
 <script>
 import AddUser from '../../components/admin/user/AddUser.vue'
 import EditUser from '../../components/admin/user/editUser.vue'
+import Permissions from 'src/services/Permission'
 export default {
   data() {
     return {
@@ -160,6 +173,9 @@ export default {
           })
         }
       }
+    },
+    can(perm) {
+      return Permissions.hasPermission(perm)
     },
   },
   computed: {

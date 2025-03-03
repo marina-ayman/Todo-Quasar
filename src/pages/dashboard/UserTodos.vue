@@ -20,7 +20,7 @@
       table-header-class="q-header2 text-weight-bolder"
     >
       <template v-slot:top-right>
-        <q-btn
+        <q-btn v-if="can('export_user_todo')"
           class="q-mx-sm custom-btn"
           glossy
           icon="archive"
@@ -59,6 +59,7 @@
 </template>
 
 <script>
+import Permissions from 'src/services/Permission'
 import { exportFile } from 'quasar'
 
 function wrapCsvValue(val, formatFn, row) {
@@ -149,7 +150,6 @@ export default {
 
         const response = await this.$adminApi.get(`/admin/get_user_todos/${userId}`)
         this.rowsData = response.data.allTodos
-        console.log(response.data.allTodos)
       } catch (error) {
         console.error('error', error.response ? error.response.data : error.message)
       }
@@ -172,7 +172,10 @@ export default {
     },
     goBack() {
     this.$router.push('/dashboard')
-    }
+    },
+    can(perm) {
+      return Permissions.hasPermission(perm)
+    },
   },
   async mounted() {
     await this.getTodo()

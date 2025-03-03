@@ -122,6 +122,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
 
+
 export default {
   data() {
     return {
@@ -143,11 +144,13 @@ export default {
           title: 'All Todos',
           icon: 'school',
           link: '/dashboard/all_todos/',
+          can: 'view_todos'
         },
         {
           title: 'All Roles',
           icon: 'code',
           link: '/dashboard/roles',
+          can: 'view_roles'
         },
       ],
       isDarkMode: localStorage.getItem("theme")

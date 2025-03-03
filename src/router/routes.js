@@ -37,7 +37,7 @@ const routes = [
       {
         path: '',
         component: () => import('pages/dashboard/UsersPage.vue'),
-        // meta: { requiredPermissions: ['view_users'] },
+        meta: { requiredPermissions: ['view_users'] },
       },
       {
         path: 'all_todos',
@@ -50,15 +50,11 @@ const routes = [
         meta: { requiredPermissions: ['view_user_todos'] },
       },
 
-      {
-        path: 'resources',
-        component: () => import('pages/dashboard/resourcesPage.vue'),
-        meta: { requiredPermissions: ['view_resources'] },
-      },
+    
       {
         path: 'roles',
         component: () => import('pages/dashboard/rolesPage.vue'),
-        // meta: { requiredPermissions: ['view_roles'] },
+        meta: { requiredPermissions: ['view_roles'] },
       },
       {
         path: 'add_role',

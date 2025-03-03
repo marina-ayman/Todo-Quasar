@@ -6,7 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
-// import store from '../store'
+import Permissions from 'src/services/Permission'
 
 export default defineRouter(() => {
   const createHistory = process.env.SERVER
@@ -49,15 +49,15 @@ export default defineRouter(() => {
 
     
 
-      // if (to.meta.requiredPermissions && to.meta.requiredPermission) {
-      //   const hasPermission = to.meta.requiredPermissions.some(permission =>
-      //     store.dispatch('hasPermission', permission) 
-      //   );
+      if (to.meta.requiredPermissions && to.meta.requiredPermission) {
+        const hasPermission = to.meta.requiredPermissions.some(permission =>
+          Permissions.hasPermission(permission)
+        )
     
-      //   if (!hasPermission) {
-      //     return next('/dashboard/forbidden');
-      //   }
-      // }
+        if (!hasPermission) {
+          return next('/dashboard/forbidden')
+        }
+      }
     next()
   })
 

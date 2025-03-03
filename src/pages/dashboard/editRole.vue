@@ -129,6 +129,9 @@ export default {
         const response = await this.$adminApi.get(`/acl/roles/${roleId}`)
 
         this.rolesData = responseData.data.resources
+        console.log('__________nn_____', response.data.data)
+        this.newRole.key = response.data.data.key
+        // this.newRole.value = response.data.data.value
 
         this.rolesData.forEach((role) => {
           this.selectedPermissions[role.id] = []
@@ -139,8 +142,6 @@ export default {
             ? role.permissions
             : []
         })
-
-        console.log('__________________________________', this.selectedPermissions)
       } catch (error) {
         console.log(error)
       } finally {
