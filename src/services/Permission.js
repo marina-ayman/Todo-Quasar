@@ -30,6 +30,8 @@ class Permission {
     this.permissions = [];
     localStorage.removeItem("user")
     localStorage.removeItem("permissions")
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminRefreshToken")
   }
 }
 

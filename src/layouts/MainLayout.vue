@@ -121,6 +121,7 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink.vue'
+import Permissions from 'src/services/Permission'
 
 
 export default {
@@ -182,9 +183,9 @@ export default {
       }
     },
     logOut() {
-      localStorage.removeItem("adminToken");
-      localStorage.removeItem("adminRefreshToken")
+      Permissions.logout()
       this.$router.push('/dashboard/auth/login')
+
     },
   },
   async mounted() {

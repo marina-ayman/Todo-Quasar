@@ -70,8 +70,8 @@
             :label="perm"
             color="blue-5"
             rounded
-          />
-        </q-expansion-item>
+          />     
+          </q-expansion-item>
 
         <div class="q-mt-md flex flex-end">
           <q-btn type="submit" :loading="loadBtn" label="Save" color="blue-4">

@@ -55,7 +55,7 @@ export default defineRouter(() => {
         )
     
         if (!hasPermission) {
-          return next('/dashboard/forbidden')
+          return next('/dashboard')
         }
       }
     next()
