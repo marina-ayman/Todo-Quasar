@@ -1,5 +1,6 @@
 import { defineBoot } from '#q-app/wrappers'
 import axios from 'axios'
+import { Notify } from 'quasar'
 
 const API_URL = "http://localhost:3000"
 
@@ -29,48 +30,44 @@ adminApi.interceptors.request.use(
 );
 
 const refreshToken = async () => {
-  const refreshToken = localStorage.getItem("refreshToken");
-  console.log("Current Refresh Token before request:", refreshToken);
+  const refreshToken = localStorage.getItem("refreshToken")
 
   if (!refreshToken) {
-    console.log("No refresh token found, logging out...");
-    return null;
+    console.log("No refresh token found, logging out...")
+    return null
   }
 
   try {
-    const { data } = await axios.post(`${API_URL}/web/refresh-token`, { refreshToken });
-    console.log("New Access Token received:", data.accessToken);
+    const { data } = await axios.post(`${API_URL}/web/refresh-token`, { refreshToken })
 
     localStorage.setItem("token", data.accessToken);
     return data.accessToken;
   } catch (error) {
-    console.error("Failed to refresh token", error.response ? error.response.data : error.message);
-    
+    console.error("Failed to refresh token", error.response ? error.response.data : error.message)  
     if (error.response && error.response.status === 401) {
-      console.log("Refresh token expired or invalid, logging out...");
+      console.log("Refresh token expired or invalid, logging out...")
     } else {
-      console.log("Unexpected error while refreshing token.");
+      console.log("Unexpected error while refreshing token.")
     }
-
-    localStorage.removeItem("token");
-    localStorage.removeItem("refreshToken");
-    window.location.href = '/auth/login';
-    return null;
+    localStorage.removeItem("token")
+    localStorage.removeItem("refreshToken")
+    window.location.href = '/auth/login'
+    return null
   }
 };
 
 
 const refreshAdminToken = async () => {
-  const refreshToken = localStorage.getItem("adminRefreshToken");
+  const refreshToken = localStorage.getItem("adminRefreshToken")
   if (!refreshToken) return null;
   try {
     const { data } = await axios.post(`${API_URL}/admin/admin-refresh-token`, { refreshToken });
-    localStorage.setItem("adminToken", data.accessToken);
-    return data.accessToken;
+    localStorage.setItem("adminToken", data.accessToken)
+    return data.accessToken
   } catch (error) {
-    console.error("Failed to refresh admin token", error);
-    localStorage.removeItem("adminToken");
-    localStorage.removeItem("adminRefreshToken");
+    console.error("Failed to refresh admin token", error)
+    localStorage.removeItem("adminToken")
+    localStorage.removeItem("adminRefreshToken")
      window.location.href ='/dashboard/auth/login'
     return null;
   }
@@ -95,7 +92,12 @@ api.interceptors.response.use(
 adminApi.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {   
+      Notify.create({
+        type: 'negative',
+        message: `refresh token expired`,
+        position: 'top',
+      })
       const newToken = await refreshAdminToken();
       if (newToken) {
         error.config.headers.Authorization = `Bearer ${newToken}`;

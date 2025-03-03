@@ -114,6 +114,7 @@ import { exportFile } from 'quasar'
 import AddTodo from '../../../components/todo/AddTodo.vue'
 import EditStatus from '../../../components/todo/updateStatus.vue'
 import EditTodo from '../../../components/todo/editTodo.vue'
+import handleError from 'src/services/errorhandler'
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val
@@ -195,11 +196,21 @@ export default {
     async getTodo() {
       try {
         const response = await this.$api.get('/web/todos')
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        }
         console.log('Donetodo', response.data.todos)
         this.rowsData = response.data.todos
         console.log(response.data.todos)
       } catch (error) {
-        console.error('error', error.response ? error.response.data : error.message)
+        handleError(error)
+        throw error
       }
     },
 
@@ -219,39 +230,27 @@ export default {
           })
           .onOk(async () => {
             const response = await this.$api.delete(`/web/todo/${id}`)
+            if (response.data.error) {
+              console.log('Done', response.data.error)
+              this.$q.notify({
+                type: 'negative',
+                message: response.data.message,
+              })
+              this.loadBtn = false
+              return
+            } else {
+              this.$q.notify({
+                type: 'positive',
+                message: response.data.message,
+              })
+            }
             await this.getTodo()
             console.log('Delete', response)
           })
           .onCancel(() => {})
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
 

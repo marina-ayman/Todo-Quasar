@@ -109,6 +109,8 @@
 </template>
 
 <script>
+import handleError from 'src/services/errorhandler'
+
 export default {
   data() {
     return {
@@ -150,6 +152,20 @@ export default {
     async onSubmit() {
       try {
         const response = await this.$adminApi.patch(`/admin/user/${this.userData.id}`, this.form)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         console.log('Done', response.data)
         this.form = {
           firstName: '',
@@ -164,35 +180,8 @@ export default {
         this.$emit('closeDialog')
         this.$router.push('/dashboard')
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-                ok: true,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
 

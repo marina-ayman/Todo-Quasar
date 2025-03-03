@@ -50,6 +50,7 @@
 </template>
 <script>
 import UpdateUser from '../../../components/user/UpdateUser.vue'
+import handleError from 'src/services/errorhandler'
 
 export default {
   name: 'LoginPage',
@@ -74,9 +75,19 @@ export default {
     async getProfile() {
       try {
         const response = await this.$api.get('/web/profile')
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        }
         this.user = response.data.profile
       } catch (error) {
-        console.error('error', error.response ? error.response.data : error.message)
+        handleError(error)
+        throw error
       }
     },
     async deleteUser() {
@@ -90,6 +101,20 @@ export default {
           })
           .onOk(async () => {
             const response = await this.$api.delete(`/web/user/${this.user.id}`)
+            if (response.data.error) {
+              console.log('Done', response.data.error)
+              this.$q.notify({
+                type: 'negative',
+                message: response.data.message,
+              })
+              this.loadBtn = false
+              return
+            } else {
+              this.$q.notify({
+                type: 'positive',
+                message: response.data.message,
+              })
+            }
             localStorage.removeItem('token')
             localStorage.removeItem('refreshToken')
 
@@ -98,34 +123,8 @@ export default {
           })
           .onCancel(() => {})
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
   },

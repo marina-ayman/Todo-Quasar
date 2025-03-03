@@ -150,6 +150,7 @@
 </template>
 
 <script>
+import handleError from 'src/services/errorhandler'
 export default {
   data() {
     return {
@@ -186,47 +187,27 @@ export default {
       this.loadBtn = true
       try {
         const response = await this.$adminApi.post('/admin/todo', this.taskTodo)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         await this.getTodo()
         console.log('Done', this.taskTodo)
         this.$emit('closeDialog')
         this.loadBtn = false
-        this.$q.notify({
-          type: 'positive',
-          message: response.data.msg,
-          ok: true,
-        })
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-                ok: true,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          }) 
-          this.$emit('closeDialog')
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-          this.$emit('closeDialog')
-        }
+        handleError(error)
+        throw error,
 
         this.loadBtn = false
       }
@@ -234,10 +215,19 @@ export default {
     async getUsers() {
       try {
         const response = await this.$adminApi.get('/admin/get_all_todos')
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        }
         this.allUsers = response.data.allUsers
-        console.log('mmm', this.allUsers)
       } catch (error) {
-        console.error('error', error.response ? error.response.data : error.message)
+        handleError(error)
+        throw error 
       }
     },
   },

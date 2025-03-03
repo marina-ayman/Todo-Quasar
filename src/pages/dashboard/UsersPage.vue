@@ -94,6 +94,8 @@
 import AddUser from '../../components/admin/user/AddUser.vue'
 import EditUser from '../../components/admin/user/editUser.vue'
 import Permissions from 'src/services/Permission'
+import handleError from 'src/services/errorhandler'
+
 export default {
   data() {
     return {
@@ -115,10 +117,20 @@ export default {
     async getAllUsers() {
       try {
         const response = await this.$adminApi.get('/admin/get_all_users')
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        }
         this.users = response.data.allUsers
         console.log('mm', this.users)
       } catch (err) {
-        console.log(err)
+        handleError(err)
+        throw err
       }
     },
     getTasksUser(id, name) {
@@ -139,39 +151,27 @@ export default {
           })
           .onOk(async () => {
             const response = await this.$adminApi.delete(`/admin/user/${id}`)
+            if (response.data.error) {
+              console.log('Done', response.data.error)
+              this.$q.notify({
+                type: 'negative',
+                message: response.data.message,
+              })
+              this.loadBtn = false
+              return
+            } else {
+              this.$q.notify({
+                type: 'positive',
+                message: response.data.message,
+              })
+            }
             await this.getAllUsers()
             console.log('Delete', response)
           })
           .onCancel(() => {})
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
     can(perm) {

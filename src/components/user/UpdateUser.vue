@@ -50,6 +50,8 @@
   </q-page>
 </template>
 <script>
+import handleError from 'src/services/errorhandler'
+
 export default {
   name: 'UpdatePage',
   data() {
@@ -80,39 +82,26 @@ export default {
     async onSubmit() {
       try {
         const response = await this.$api.patch(`/web/user/${this.user.id}`, this.form)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         await this.getProfile()
         console.log('Done', response)
         this.$emit('updated', false)
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          console.log(errorData.errors)
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
   },

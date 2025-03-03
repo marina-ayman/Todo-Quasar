@@ -59,7 +59,6 @@
           group="profile"
           class="q-mb-md"
           style="border-radius: 15px"
-
         >
           <q-checkbox
             v-for="(perm, i) in role.permissions"
@@ -70,8 +69,8 @@
             :label="perm"
             color="blue-5"
             rounded
-          />     
-          </q-expansion-item>
+          />
+        </q-expansion-item>
 
         <div class="q-mt-md flex flex-end">
           <q-btn type="submit" :loading="loadBtn" label="Save" color="blue-4">
@@ -86,16 +85,18 @@
 </template>
 
 <script>
+import handleError from 'src/services/errorhandler'
+
 export default {
   data() {
     return {
       loadBtn: false,
       rolesData: [],
       newRole: {
-        key: "",
-        value: "",
+        key: '',
+        value: '',
       },
-      selectedPermissions: {}, 
+      selectedPermissions: {},
     }
   },
 
@@ -103,22 +104,31 @@ export default {
     async saveData() {
       this.loadBtn = true
       try {
-        
         const data = {
-          role:this.newRole,
-          resources:this.selectedPermissions
+          role: this.newRole,
+          resources: this.selectedPermissions,
         }
         console.log(data)
         const response = await this.$adminApi.post('/acl/roles', data)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         this.loadBtn = false
         this.$router.push('/dashboard/roles')
-        this.$q.notify({
-          type: 'positive',
-          message: response.data.msg,
-          ok: true,
-        })
       } catch (error) {
-        this.handleError(error)
+        handleError(error)
+        throw error
       }
     },
 
@@ -126,31 +136,25 @@ export default {
       this.loadBtn = true
       try {
         const response = await this.$adminApi.get('/acl/getRoleData')
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          return
+        }
         this.rolesData = response.data.resources
 
-        this.rolesData.forEach(role => {
+        this.rolesData.forEach((role) => {
           this.selectedPermissions[role.id] = []
         })
       } catch (error) {
-        console.log(error)
+        handleError(error)
+        throw error
       } finally {
         this.loadBtn = false
       }
-    },
-
-    handleError(error) {
-      if (error.response && error.response.data) {
-        this.$q.notify({
-          type: 'negative',
-          message: `Error: ${error.response.data.message || 'Unknown error'}`,
-        })
-      } else {
-        this.$q.notify({
-          type: 'negative',
-          message: `Error: ${error.message}`,
-        })
-      }
-      this.loadBtn = false
     },
   },
 

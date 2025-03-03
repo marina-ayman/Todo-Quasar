@@ -32,10 +32,9 @@
         <q-img src="~assets/img/hour.png" class="text2 img" width="30px" />
         <router-link to="/auth/reg" class="text2"> Go to Register to create acount</router-link>
       </div>
-
     </div>
     <div class="col-7">
-      <div class="flex flex-center ">
+      <div class="flex flex-center">
         <q-img width="50rem" src="~assets/img/reg.png" style="border-radius: 50%" />
       </div>
     </div>
@@ -43,6 +42,8 @@
 </template>
 
 <script>
+import handleError from 'src/services/errorhandler'
+
 export default {
   data() {
     return {
@@ -56,9 +57,22 @@ export default {
   },
   methods: {
     async onLogin() {
-      const response = await this.$api.post('/web/login', this.form)
       try {
-        console.log('Done', response.data)
+        const response = await this.$api.post('/web/login', this.form)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         const { accessToken, refreshToken } = response.data.token
 
         localStorage.setItem('token', accessToken)
@@ -66,34 +80,8 @@ export default {
 
         this.$router.push('/profile')
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
   },

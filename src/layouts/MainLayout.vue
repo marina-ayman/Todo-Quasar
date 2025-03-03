@@ -145,13 +145,13 @@ export default {
           title: 'All Todos',
           icon: 'school',
           link: '/dashboard/all_todos/',
-          can: 'view_todos'
+          perm: 'view_todos'
         },
         {
           title: 'All Roles',
           icon: 'code',
           link: '/dashboard/roles',
-          can: 'view_roles'
+          perm: 'view_roles'
         },
       ],
       isDarkMode: localStorage.getItem("theme")

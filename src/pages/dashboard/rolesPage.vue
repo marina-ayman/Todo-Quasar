@@ -19,20 +19,28 @@
       table-header-class="q-header2 text-weight-bolder"
     >
       <template v-slot:top-right>
-        <q-btn v-if="can('export_role')"
+        <q-btn
+          v-if="can('export_role')"
           class="q-mx-sm custom-btn"
           glossy
           icon="archive"
           label="export"
           @click="exportTable"
         />
-        <q-btn v-if="can('create_role')"
-        class="q-mx-sm custom-btn" glossy icon="library_add" label="add" @click="addRole" />
+        <q-btn
+          v-if="can('create_role')"
+          class="q-mx-sm custom-btn"
+          glossy
+          icon="library_add"
+          label="add"
+          @click="addRole"
+        />
       </template>
 
       <template v-slot:body-cell-action="props">
         <q-td :props="props">
-          <q-btn  v-if="can('update_role')"
+          <q-btn
+            v-if="can('update_role')"
             color="primary"
             class="q-ml-sm q-pa-sm"
             flat
@@ -40,7 +48,8 @@
             size="md"
             @click="editRole(props.row)"
           />
-          <q-btn  v-if="can('delete_role')"
+          <q-btn
+            v-if="can('delete_role')"
             color="red"
             icon="delete"
             size="md"
@@ -57,6 +66,7 @@
 <script>
 import { exportFile } from 'quasar'
 import Permissions from 'src/services/Permission'
+import handleError from 'src/services/errorhandler'
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val
@@ -124,7 +134,8 @@ export default {
         const response = await this.$adminApi.get('/acl/roles')
         this.rowsData = response.data
       } catch (error) {
-        console.error('error', error.response ? error.response.data : error.message)
+        handleError(error)
+        throw error
       }
     },
 
@@ -142,39 +153,27 @@ export default {
           })
           .onOk(async () => {
             const response = await this.$adminApi.delete(`/acl/roles/${id}`)
+            if (response.data.error) {
+              console.log('Done', response.data.error)
+              this.$q.notify({
+                type: 'negative',
+                message: response.data.message,
+              })
+              this.loadBtn = false
+              return
+            } else {
+              this.$q.notify({
+                type: 'positive',
+                message: response.data.message,
+              })
+            }
             await this.getRoles()
             console.log('Delete', response)
           })
           .onCancel(() => {})
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
     addRole() {

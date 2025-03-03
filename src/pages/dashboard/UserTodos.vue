@@ -1,7 +1,5 @@
 <template>
-
   <div class="q-pa-md q-ma-xl">
-    
     <q-input v-model="search" label="Search..." dense outlined class="q-mx-xl">
       <template v-slot:prepend>
         <q-icon name="search" />
@@ -20,14 +18,14 @@
       table-header-class="q-header2 text-weight-bolder"
     >
       <template v-slot:top-right>
-        <q-btn v-if="can('export_user_todo')"
+        <q-btn
+          v-if="can('export_user_todo')"
           class="q-mx-sm custom-btn"
           glossy
           icon="archive"
           label="export"
           @click="exportTable"
         />
-        
       </template>
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
@@ -39,28 +37,36 @@
 
       <template v-slot:body-cell-tags="props">
         <q-td :props="props">
-        <div style="display: flex; flex-wrap: wrap;width: 250px;">
-
-          <q-chip
-            v-for="(tag, index) in parseTags(props.row.tags)"
-            :key="index"
-            color="blue-3"
-            text-color="black"
-          >
-            {{ tag }}
-          </q-chip>
-        </div>
+          <div style="display: flex; flex-wrap: wrap; width: 250px">
+            <q-chip
+              v-for="(tag, index) in parseTags(props.row.tags)"
+              :key="index"
+              color="blue-3"
+              text-color="black"
+            >
+              {{ tag }}
+            </q-chip>
+          </div>
         </q-td>
       </template>
     </q-table>
-    <q-btn icon="arrow_back" color="blue" @click="goBack()" label="Go Back" size="15px" glossy outline class="q-ma-md q-mx-xl"/>
-
+    <q-btn
+      icon="arrow_back"
+      color="blue"
+      @click="goBack()"
+      label="Go Back"
+      size="15px"
+      glossy
+      outline
+      class="q-ma-md q-mx-xl"
+    />
   </div>
 </template>
 
 <script>
 import Permissions from 'src/services/Permission'
 import { exportFile } from 'quasar'
+import handleError from 'src/services/errorhandler'
 
 function wrapCsvValue(val, formatFn, row) {
   let formatted = formatFn !== void 0 ? formatFn(val, row) : val
@@ -107,9 +113,8 @@ export default {
       showUpdateDialog: false,
       statusId: null,
       todoData: null,
-      search:'',
-      title:''
-         
+      search: '',
+      title: '',
     }
   },
 
@@ -149,9 +154,19 @@ export default {
         this.title = `${this.$route.params.name} todos`
 
         const response = await this.$adminApi.get(`/admin/get_user_todos/${userId}`)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        }
         this.rowsData = response.data.allTodos
       } catch (error) {
-        console.error('error', error.response ? error.response.data : error.message)
+        handleError(error)
+        throw error
       }
     },
 
@@ -171,7 +186,7 @@ export default {
       return Array.isArray(tags) ? tags : JSON.parse(tags)
     },
     goBack() {
-    this.$router.push('/dashboard')
+      this.$router.push('/dashboard')
     },
     can(perm) {
       return Permissions.hasPermission(perm)
@@ -182,15 +197,15 @@ export default {
   },
   computed: {
     filterRows() {
-      if (!this.search) return this.rowsData; 
+      if (!this.search) return this.rowsData
 
-      const searchLower = this.search.toLowerCase();
-      return this.rowsData.filter(row =>
-        Object.values(row).some(value =>
-          value && String(value).toLowerCase().includes(searchLower)
-        )
-      );
-    }
+      const searchLower = this.search.toLowerCase()
+      return this.rowsData.filter((row) =>
+        Object.values(row).some(
+          (value) => value && String(value).toLowerCase().includes(searchLower),
+        ),
+      )
+    },
   },
 }
 </script>

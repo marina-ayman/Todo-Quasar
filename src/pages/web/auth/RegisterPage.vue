@@ -1,10 +1,11 @@
 <template>
-  <div class="row q-ma-xl" >
-    <div class="col-5 " >
+  <div class="row q-ma-xl">
+    <div class="col-5">
       <div class="text2">
         <h4 class="text-center text2">
-          <q-img src="~assets/img/hour.png" class="text2 " width="80px" />
-          Register</h4>
+          <q-img src="~assets/img/hour.png" class="text2" width="80px" />
+          Register
+        </h4>
         <q-form @submit.prevent="onSubmit" class="q-px-xl q-mx-xl text2">
           <q-input
             v-model="form.firstName"
@@ -55,9 +56,9 @@
           </div>
         </q-form>
         <div class="text-center q-ma-md">
-        <q-img src="~assets/img/hour.png" class="text2 img" width="30px" />
-        <router-link to="/auth/login" class="text2"> if you have acount Go to Login</router-link>
-      </div>
+          <q-img src="~assets/img/hour.png" class="text2 img" width="30px" />
+          <router-link to="/auth/login" class="text2"> if you have acount Go to Login</router-link>
+        </div>
       </div>
     </div>
     <div class="col-7 q-header">
@@ -67,7 +68,7 @@
 
       <div class="typeClass q-py-xl">
         <div class="typing q-py-xl">
-          <div class="typing ">
+          <div class="typing">
             <span>S</span><span>t</span><span>a</span><span>y</span>
             <span> </span>
             <span>o</span><span>r</span><span>g</span><span>a</span><span>n</span><span>i</span
@@ -88,6 +89,8 @@
 </template>
 
 <script>
+import handleError from 'src/services/errorhandler'
+
 export default {
   data() {
     return {
@@ -106,38 +109,25 @@ export default {
     async onSubmit() {
       try {
         const response = await this.$api.post('/web/register', this.form)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         console.log('Done', response.data)
         this.$router.push('/auth/login')
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-                ok: true,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
   },
@@ -256,7 +246,7 @@ export default {
 
 img {
   height: auto;
-            transform: rotate(-45deg);
-            transition: transform 0.5s ease-in-out;
-        }
+  transform: rotate(-45deg);
+  transition: transform 0.5s ease-in-out;
+}
 </style>

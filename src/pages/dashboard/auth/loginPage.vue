@@ -38,6 +38,7 @@
 </template>
 <script>
 import Permissions from 'src/services/Permission'
+import handleError from 'src/services/errorhandler'
 
 export default {
   data() {
@@ -53,9 +54,22 @@ export default {
   methods: {
     // ...mapActions(['login']),
     async onLogin() {
-      const response = await this.$adminApi.post('/admin/login', this.form)
       try {
-        console.log('Done', response.data)
+        const response = await this.$adminApi.post('/admin/login', this.form)
+
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         const { accessToken, refreshToken } = response.data.token
 
         localStorage.setItem('adminToken', accessToken)
@@ -77,34 +91,8 @@ export default {
 
         this.$router.push('/dashboard')
       } catch (error) {
-        if (error.response && error.response.data) {
-          const errorData = error.response.data
-          if (errorData.errors && Array.isArray(errorData.errors)) {
-            errorData.errors.forEach((err) => {
-              this.$q.notify({
-                type: 'negative',
-                message: `Error: ${err}`,
-              })
-            })
-          } else {
-            this.$q.notify({
-              type: 'negative',
-              message: `Error: ${errorData.message || 'Unknown error'}`,
-            })
-          }
-        } else if (error.request) {
-          console.error('No response received:', error.request)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: No response received from the server.`,
-          })
-        } else {
-          console.error('Error', error.message)
-          this.$q.notify({
-            type: 'negative',
-            message: `Error: ${error.message}`,
-          })
-        }
+        handleError(error)
+        throw error
       }
     },
   },

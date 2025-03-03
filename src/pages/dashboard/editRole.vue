@@ -85,6 +85,8 @@
 </template>
 
 <script>
+import handleError from 'src/services/errorhandler'
+
 export default {
   data() {
     return {
@@ -108,15 +110,25 @@ export default {
         }
         console.log(data)
         const response = await this.$adminApi.patch('/acl/roles', data)
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: response.data.message,
+          })
+        }
         this.loadBtn = false
         this.$router.push('/dashboard/roles')
-        this.$q.notify({
-          type: 'positive',
-          message: response.data.msg,
-          ok: true,
-        })
       } catch (error) {
-        this.handleError(error)
+        handleError(error)
+        throw error
       }
     },
 
@@ -127,11 +139,17 @@ export default {
         const roleId = this.$route.params.id
         const responseData = await this.$adminApi.get('/acl/getRoleData')
         const response = await this.$adminApi.get(`/acl/roles/${roleId}`)
-
+        if (response.data.error) {
+          console.log('Done', response.data.error)
+          this.$q.notify({
+            type: 'negative',
+            message: response.data.message,
+          })
+          this.loadBtn = false
+          return
+        }
         this.rolesData = responseData.data.resources
-        console.log('__________nn_____', response.data.data)
         this.newRole.key = response.data.data.key
-        // this.newRole.value = response.data.data.value
 
         this.rolesData.forEach((role) => {
           this.selectedPermissions[role.id] = []
@@ -143,25 +161,11 @@ export default {
             : []
         })
       } catch (error) {
-        console.log(error)
+        handleError(error)
+        throw error
       } finally {
         this.loadBtn = false
       }
-    },
-
-    handleError(error) {
-      if (error.response && error.response.data) {
-        this.$q.notify({
-          type: 'negative',
-          message: `Error: ${error.response.data.message || 'Unknown error'}`,
-        })
-      } else {
-        this.$q.notify({
-          type: 'negative',
-          message: `Error: ${error.message}`,
-        })
-      }
-      this.loadBtn = false
     },
   },
 
