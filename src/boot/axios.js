@@ -77,7 +77,7 @@ const refreshAdminToken = async () => {
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response.status === 401 || error.response.status === 403) {
+    if (error.response.status === 401 ) {
       const newToken = await refreshToken();
       if (newToken) {
         error.config.headers.Authorization = `Bearer ${newToken}`;
@@ -92,7 +92,7 @@ api.interceptors.response.use(
 adminApi.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {   
+    if (error.response && (error.response.status === 401)) {   
       Notify.create({
         type: 'negative',
         message: `refresh token expired`,
