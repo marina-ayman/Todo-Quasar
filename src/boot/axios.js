@@ -38,7 +38,7 @@ const refreshToken = async () => {
   }
 
   try {
-    const { data } = await axios.post(`${API_URL}/web/refresh-token`, { refreshToken })
+    const { data } = await api.post(`/web/refresh-token`, { refreshToken })
 
     localStorage.setItem("token", data.accessToken);
     return data.accessToken;
@@ -61,7 +61,7 @@ const refreshAdminToken = async () => {
   const refreshToken = localStorage.getItem("adminRefreshToken")
   if (!refreshToken) return null;
   try {
-    const { data } = await axios.post(`${API_URL}/admin/admin-refresh-token`, { refreshToken });
+    const { data } = await adminApi.post(`/admin/admin-refresh-token`, { refreshToken });
     localStorage.setItem("adminToken", data.accessToken)
     return data.accessToken
   } catch (error) {

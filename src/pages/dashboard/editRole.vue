@@ -109,7 +109,8 @@ export default {
           resources: this.selectedPermissions,
         }
         console.log(data)
-        const response = await this.$adminApi.patch('/acl/roles', data)
+        const roleId = this.$route.params.id
+        const response = await this.$adminApi.patch(`/acl/roles/${roleId}`, data)
         if (response.data.error) {
           console.log('Done', response.data.error)
           this.$q.notify({

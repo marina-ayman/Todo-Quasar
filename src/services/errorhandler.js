@@ -4,7 +4,7 @@ const handleError = (error) => {
   console.error('Full error object:', error)
 
   if (error.response?.data) {
-    const errorData = error.response
+    const errorData = error.response.data
 
     if (Array.isArray(errorData.errors)) {
       errorData.errors.forEach((err) => {

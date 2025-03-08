@@ -176,7 +176,7 @@ export default {
     },
     async getProfile() {
       try {
-        const response = await this.$adminApi.get('/web/profile')
+        const response = await this.$adminApi.get('/admin/profile')
         this.user = response.data.profile
       } catch (error) {
         console.error('error', error.response ? error.response.data : error.message)
