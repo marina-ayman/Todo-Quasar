@@ -31,7 +31,7 @@
     <div class="relative-position col-6 q-header" style="position: relative; height: 100vh">
       <q-img
         src="~assets/img/profile-transparent.webp"
-        style="position: absolute; bottom: 0; right: 0; width: 1000px; height: auto"
+        style="position: absolute; bottom: 0; right: 0; width: 800px; height: auto"
       />
     </div>
   </div>

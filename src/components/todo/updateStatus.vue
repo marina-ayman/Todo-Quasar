@@ -61,7 +61,7 @@ export default {
       console.log('Done', this.statusId)
 
       try {
-        const response = await this.$api.patch(`/web/${this.statusId}/status`, {
+        const response = await this.$api.patch(`/status/${this.statusId}`, {
           status: this.status,
         })
         if (response.data.error) {

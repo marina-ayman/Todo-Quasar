@@ -134,7 +134,8 @@ export default {
         { name: 'title', label: 'Title', align: 'left', field: (row) => row.title },
         { name: 'tags', label: 'Tags', align: 'left', field: (row) => row.tags },
         { name: 'status', label: 'Status', align: 'left', field: (row) => row.status },
-        { name: 'userId', label: 'User ID', align: 'left', field: (row) => row.userId },
+        { name: 'userId', label: 'User', align: 'left',
+         field: (row) => (row.webUser ? row.webUser.email : ''), },
         {
           name: 'formattedFromDate',
           label: 'From Date',

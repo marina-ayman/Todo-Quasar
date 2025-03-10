@@ -43,7 +43,7 @@
         />
 
         <div class="q-mt-sm text-right">
-          <q-btn label="Register" type="submit" class="custom-btn" />
+          <q-btn label="submit" type="submit" class="custom-btn" />
         </div>
       </q-form>
     </q-card>

@@ -89,9 +89,9 @@ export default {
 </script>
 
 <style scoped>
-.img {
+/* .img {
   height: auto;
   transform: rotate(-45deg);
   transition: transform 0.5s ease-in-out;
-}
+} */
 </style>

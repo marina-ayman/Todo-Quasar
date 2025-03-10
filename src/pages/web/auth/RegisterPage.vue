@@ -63,7 +63,7 @@
     </div>
     <div class="col-7 q-header">
       <div class="flex flex-center">
-        <q-img src="~assets/img/hour.png" class="text2" width="550px" />
+        <q-img src="~assets/img/hour.png " class="text2 imgg" width="550px" />
       </div>
 
       <div class="typeClass q-py-xl">
@@ -244,7 +244,7 @@ export default {
   animation-delay: 2.5s;
 }
 
-img {
+.imgg {
   height: auto;
   transform: rotate(-45deg);
   transition: transform 0.5s ease-in-out;

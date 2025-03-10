@@ -172,10 +172,17 @@ export default {
           this.$q.notify({
             type: 'negative',
             message: response.data.message,
-          })
-          this.loadBtn = false
+          })  
+            (this.loadBtn = false)
+
           return
         } else {
+          this.taskTodo = {
+            title: '',
+            fromDate: '',
+            toDate: '',
+            tags: [],
+          },
           this.$q.notify({
             type: 'positive',
             message: response.data.message,
@@ -187,9 +194,7 @@ export default {
         this.loadBtn = false
       } catch (error) {
         handleError(error)
-        throw error,
-
-        this.loadBtn = false
+        throw (error, (this.loadBtn = false))
       }
     },
   },

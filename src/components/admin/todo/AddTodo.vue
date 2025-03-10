@@ -193,9 +193,16 @@ export default {
             type: 'negative',
             message: response.data.message,
           })
+         
           this.loadBtn = false
           return
         } else {
+          this.taskTodo = {
+            title: '',
+            fromDate: '',
+            toDate: '',
+            tags: [],
+          },
           this.$q.notify({
             type: 'positive',
             message: response.data.message,
